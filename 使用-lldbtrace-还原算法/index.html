@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>使用 LLDBTrace 还原算法 - mdr&#39;s Blog</title><meta name="author" content="mdr">
+<meta name="author-link" content="https://github.com/mdr668">
+<meta name="description" content="lldbtrace链接 https://github.com/yangyss/lldb-trace 首先利用 lldbtrace 处理一个BUG 有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置 1 2 3 4 5 6 7 8 9 memset(dest,0,0x10000); ByteToHexStr(dvChr,dest,dvChrLen); printf(&#" /><meta name="keywords" content='Hugo, FixIt' /><meta itemprop="name" content="使用 LLDBTrace 还原算法">
+<meta itemprop="description" content="lldbtrace链接 https://github.com/yangyss/lldb-trace 首先利用 lldbtrace 处理一个BUG 有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置 1 2 3 4 5 6 7 8 9 memset(dest,0,0x10000); ByteToHexStr(dvChr,dest,dvChrLen); printf(&#"><meta itemprop="datePublished" content="2022-01-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-01-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1431">
+<meta itemprop="keywords" content="" /><meta property="og:title" content="使用 LLDBTrace 还原算法" />
+<meta property="og:description" content="lldbtrace链接 https://github.com/yangyss/lldb-trace 首先利用 lldbtrace 处理一个BUG 有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置 1 2 3 4 5 6 7 8 9 memset(dest,0,0x10000); ByteToHexStr(dvChr,dest,dvChrLen); printf(&#" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-01-02T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用 LLDBTrace 还原算法"/>
+<meta name="twitter:description" content="lldbtrace链接 https://github.com/yangyss/lldb-trace 首先利用 lldbtrace 处理一个BUG 有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置 1 2 3 4 5 6 7 8 9 memset(dest,0,0x10000); ByteToHexStr(dvChr,dest,dvChrLen); printf(&#"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "使用 LLDBTrace 还原算法",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "\/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95\/"
+    },"genre": "posts","wordcount":  1431 ,
+    "url": "\/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95\/","datePublished": "2022-01-02T00:00:00+00:00","dateModified": "2022-01-02T00:00:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "mdr"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="mdr&#39;s Blog"><img loading="lazy" src="/fixit.min.svg" srcset="/fixit.min.svg, /fixit.min.svg 1.5x, /fixit.min.svg 2x" sizes="auto" data-title="mdr&#39;s Blog" data-alt="mdr&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">猫大人的自留地</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="mdr&#39;s Blog"><img loading="lazy" src="/fixit.min.svg" srcset="/fixit.min.svg, /fixit.min.svg 1.5x, /fixit.min.svg 2x" sizes="auto" data-title="/fixit.min.svg" data-alt="/fixit.min.svg" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">猫大人的自留地</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container"><aside class="toc" id="toc-auto"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>使用 LLDBTrace 还原算法</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/mdr668" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    mdr</a></span></div>
+      <div class="post-meta-line"><span title="发布于 2022-01-02 00:00:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-02">2022-01-02</time></span>&nbsp;<span title="更新于 2022-01-02 00:00:00"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-02">2022-01-02</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1431 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#首先利用-lldbtrace-处理一个bug">首先利用 lldbtrace 处理一个BUG</a>
+          <ul>
+            <li>
+              <ul>
+                <li>
+                  <ul>
+                    <li><a href="#分析trace日志">分析trace日志</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#还原阿里waf算法">还原阿里WAF算法</a>
+          <ul>
+            <li><a href="#key的生成">KEY的生成</a></li>
+            <li><a href="#iv-的生成">IV 的生成</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>lldbtrace链接 <a href="https://github.com/yangyss/lldb-trace"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/yangyss/lldb-trace</a></p>
+<h3 id="首先利用-lldbtrace-处理一个bug">首先利用 lldbtrace 处理一个BUG</h3>
+<p>有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    memset(dest,0,0x10000);
+</span></span><span class="line"><span class="cl">    ByteToHexStr(dvChr,dest,dvChrLen);
+</span></span><span class="line"><span class="cl">    printf(&#34;进入前:%s\n&#34;,dest);
+</span></span><span class="line"><span class="cl">               
+</span></span><span class="line"><span class="cl">    byteTurn(dvChr, dvChrLen, 0x5);//字节翻转加密
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    memset(dest2,0,0x10000);
+</span></span><span class="line"><span class="cl">    ByteToHexStr(dvChr,dest,dvChrLen);
+</span></span><span class="line"><span class="cl">    printf(&#34;进入后:%s\n&#34;,dest);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>byteTurn函数的功能是对字节分别进行翻转,并加上一个值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//字节按位翻转 并加减随机值
+</span></span><span class="line"><span class="cl">void byteTurn(uint8_t *lpBuf,int lpLen,int seed){
+</span></span><span class="line"><span class="cl">    for (int i = 0; i &lt; lpLen; i++) {
+</span></span><span class="line"><span class="cl">        uint8_t byte= lpBuf[i];
+</span></span><span class="line"><span class="cl">        lpBuf[i] = (((byte &lt;&lt; 4) | (byte &gt;&gt; 4)) + seed) &amp; 0xff;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>byteTurn</code> 函数前后分别打印
+进入前: <code>06 9c e7 0e 9c a6 d1 6d bd c8 77 a5 d1 68 bd cf</code></p>
+<p>WASM值:    <code>65 fe 03 e5 fe ff 02 db 00 01 7c ff 02 8b 00 01</code>
+正 常 值:   <code>65 ce 83 e5 ce 6f 22 db e0 91 7c 5f 22 8b e0 01</code></p>
+<p>这里发现,部分字节经过翻转加密之后得出的结果和正常结果不一致</p>
+<hr>
+<ol>
+<li>对源码进行下断点调试,发现第一个BUG
+<img loading="lazy" src="media/16822141891122/16822178655537.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822178655537.jpg, media/16822141891122/16822178655537.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822178655537.jpg 2x" sizes="auto" data-title="WASM反编译代码" data-alt="WASM反编译代码" width="546" height="284" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></li>
+</ol>
+<p>这里汇编的大概意思是,取 var15 和 -4 进行比较,如果 var15 &lt; -4 的话就跳转label14</p>
+<p>但是在对照解释器时发现,两个值都被转成无符号int32进行比较:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    case I32LtS:
+</span></span><span class="line"><span class="cl">        c = (uint32_t) a &lt; (uint32_t) b;
+</span></span><span class="line"><span class="cl">        break;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在无符号int32中, -4 会被转成 0xFFFFFFFC (4294967292),然后 var15 就会恒小于 0xFFFFFFFC的,这里显然是不合理的,所以这里应该改为有符号的比较</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    case I32LtS:
+</span></span><span class="line"><span class="cl">        c =  (int32_t)a &lt;  (int32_t)b;
+</span></span><span class="line"><span class="cl">        break;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<ol start="2">
+<li>查找字节转换失败的原因</li>
+</ol>
+<p>因为VMP解释器中流转非常复杂,进行断点调试难度还是比较大的,所以我这边采用使用lldbtrace先把大概的流程trace出来</p>
+<p>在trace之前需要先确定一下 dvChr 的内存地址,这样比较容易定位一些</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(lldb) p/x dvChr
+</span></span><span class="line"><span class="cl">(uint64_t) $16 = 0x0000000282634000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后就可以打开trace,本来等待程序自己运行结束
+但是运行了3小时,才产生了4w+行的日志,真机trace效率较低
+感觉自己需要的部分应该差不多有了就结束了trace</p>
+<h6 id="分析trace日志">分析trace日志</h6>
+<p>首先搜索 dvChr 的内存地址进行一个基本的定位</p>
+<p><img loading="lazy" src="media/16822141891122/16822196604160.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822196604160.jpg, media/16822141891122/16822196604160.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822196604160.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822196604160.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822196604160.jpg" width="1880" height="878" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>发现结果才40条,不符合预期
+因为这个加密函数是按位操作的,尝试内存位去掉一位,搜索 28263400
+<img loading="lazy" src="media/16822141891122/16822197621953.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822197621953.jpg, media/16822141891122/16822197621953.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822197621953.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822197621953.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822197621953.jpg" width="2036" height="822" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>这次有316条,基本接近了</p>
+<p>简单分析一下日志,0x10026f274 这里是对内存赋值,也就是生成结果的位置
+<img loading="lazy" src="media/16822141891122/16822200629323.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822200629323.jpg, media/16822141891122/16822200629323.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822200629323.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822200629323.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822200629323.jpg" width="1664" height="668" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>WASM值:    <code>65 fe 03 e5 fe ff 02 db 00 01 7c ff 02 8b 00 01</code>
+符合我们的生成预期</p>
+<p>因为第二个字节 9c =&gt; ce 时出错了, 转成 9c =&gt; fe,我们需要查看 282634001 的 0xfffffffe 是怎么生成的</p>
+<p>尝试搜索 0xfffffffe 查看生成位置
+<img loading="lazy" src="media/16822141891122/16822203412613.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822203412613.jpg, media/16822141891122/16822203412613.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822203412613.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822203412613.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822203412613.jpg" width="1316" height="178" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+定位到 0xfffffffe = 0xfffffff9 + 0x00000005,符合预期
+继续向上查找 0xfffffff9 是怎么生成</p>
+<p><img loading="lazy" src="media/16822141891122/16822213491024.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822213491024.jpg, media/16822141891122/16822213491024.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822213491024.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822213491024.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822213491024.jpg" width="1534" height="134" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>这里可以看出  0xfffffff9 = 0xfffff9c0 | 0x0ffffff9
+但是我们正常的运行逻辑应该是 0xc9 = 0xc0 | 0x09</p>
+<p>继续查找 0x0ffffff9 的生成,最终定位在
+<img loading="lazy" src="media/16822141891122/16822216516175.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822216516175.jpg, media/16822141891122/16822216516175.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822216516175.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822216516175.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822216516175.jpg" width="1576" height="142" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>错误原因:<strong>ldrsb（功能不变指令变为带符号8位）,所以在高位自动补了0xffffff</strong>
+对应代码里的位置为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    case I32Load8U:
+</span></span><span class="line"><span class="cl">        stack[m-&gt;sp].value.int32 = *(int8_t*)maddr;
+</span></span><span class="line"><span class="cl">        stack[m-&gt;sp].value_type = I32;
+</span></span><span class="line"><span class="cl">        break;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里做一下修改</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    case I32Load8U:
+</span></span><span class="line"><span class="cl">        stack[m-&gt;sp].value.int32 = (*(int8_t*)maddr) &amp; 0xff;
+</span></span><span class="line"><span class="cl">        stack[m-&gt;sp].value_type = I32;
+</span></span><span class="line"><span class="cl">        break;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>对应的汇编指令
+<img loading="lazy" src="media/16822141891122/16822242733481.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822242733481.jpg, media/16822141891122/16822242733481.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822242733481.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822242733481.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16822242733481.jpg" width="1140" height="192" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>ldrb(功能不变，指令变为8位)
+这样子就恢复正常,解决了问题</p>
+<hr>
+<h3 id="还原阿里waf算法">还原阿里WAF算法</h3>
+<p>appkey:
+<code>j0m4PjXNgOX_A_ZJXjBNgJ0DRtp_VQWwEMS5DkAJUJsKPR-0r8PqOkWMrhwymjZCoyOzBW2aqkrY8Tw9Cbwyl9fMOlOMPTC7_sOho2t_mOpdhkcQrWAc8fv_EATLX5DSrlve4QlMpMZtIuTfry6bm9BLY-_E9b9Kwmha6fZHAZY=</code></p>
+<p><img loading="lazy" src="media/16822141891122/16823014083387.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823014083387.jpg, media/16822141891122/16823014083387.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823014083387.jpg 2x" sizes="auto" data-title="appkey解密" data-alt="appkey解密" width="2096" height="1108" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+=&gt; <code>52cce52117575f24|14b8_d5bdfc94-fd29-4d22-8eef-c9b4af7b2db7|d330_c4857e5e-0b88-42de-9782-813d43b7cd56|m.yundun.waf.1|0002</code></p>
+<p>由hook得知AES的key和iv,从trace日志中查找生成算法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">key = bytes.fromhex(&#39;42 36 03 c1 b2 8a b2 3a b7 53 25 97 87 12 5b 85&#39;)
+</span></span><span class="line"><span class="cl">iv =  bytes.fromhex(&#39;31 33 61 66 75 74 74 94 b5 16 1f 92 2d 47 9c b1&#39;)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="key的生成">KEY的生成</h4>
+<p>尝试搜索 423603c1
+<img loading="lazy" src="media/16822141891122/16823021494590.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823021494590.jpg, media/16822141891122/16823021494590.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823021494590.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823021494590.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823021494590.jpg" width="1918" height="100" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>发现
+<code>0x423603c1b28ab23ab753259787125b85 = 0x512510d2a199a129a440368494014896 ^ 0x13131313131313131313131313131313 </code>
+由hook得知
+<code>0x512510d2a199a129a440368494014896 = MD5(d5bdfc94-fd29-4d22-8eef-c9b4af7b2db7)</code></p>
+<p>查找 0x13131313131313131313131313131313 的生成
+<img loading="lazy" src="media/16822141891122/16823027251438.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823027251438.jpg, media/16822141891122/16823027251438.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823027251438.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823027251438.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823027251438.jpg" width="1682" height="88" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+dup用于把一个相同值赋值若干次</p>
+<p>查找 w8  : 0x00000013 的生成
+<img loading="lazy" src="media/16822141891122/16823035787249.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823035787249.jpg, media/16822141891122/16823035787249.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823035787249.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823035787249.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823035787249.jpg" width="1634" height="140" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+0x00000013 = 0x0000000d + 0x00000006
+0x0000000d 和 0x00000006 是 0xfffffe6d 个位和十位</p>
+<p>查找 w8  : 0xfffffe6d 的生成</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0xfffffe6d = 0xffffff96 + 0xfffffed7
+</span></span><span class="line"><span class="cl">0xfffffed7 = 0x00000048 + 0xfffffe8f
+</span></span><span class="line"><span class="cl">0xfffffe8f = 0x00000001 + 0xfffffe8e
+</span></span><span class="line"><span class="cl">0xfffffe8e = 0xffffff94 + 0xfffffefa
+</span></span><span class="line"><span class="cl">0xfffffefa = 0xffffff84 + 0xffffff76
+</span></span><span class="line"><span class="cl">....
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>发现是一个循环相加, 仔细看可以知道是 0x512510d2a199a129a440368494014896 的循环相加
+写个简单的代码验证一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    bytearray = bytes.fromhex(&#39;512510d2a199a129a440368494014896&#39;)
+</span></span><span class="line"><span class="cl">    ret = 0
+</span></span><span class="line"><span class="cl">    for key in bytearray:
+</span></span><span class="line"><span class="cl">        ret += int(key)
+</span></span><span class="line"><span class="cl">    print(hex(ret))
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    ==&gt; 0x66d 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>尾数 0x6d 符合预期</p>
+<h4 id="iv-的生成">IV 的生成</h4>
+<p><code>iv =  bytes.fromhex('31 33 61 66 75 74 74 94 b5 16 1f 92 2d 47 9c b1')</code></p>
+<p>直接搜索 31336166 没有结果
+顺位搜索后面四个字节 75747494
+<img loading="lazy" src="media/16822141891122/16823062467766.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823062467766.jpg, media/16822141891122/16823062467766.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823062467766.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823062467766.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823062467766.jpg" width="2010" height="104" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+<code>0x33616675747494b50000000000000000 = 0x32636365353231310000000000000000 ^ 0x010205104146a5840000000000000000</code></p>
+<p><img loading="lazy" src="media/16822141891122/16823077598627.jpg" srcset="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823077598627.jpg, media/16822141891122/16823077598627.jpg 1.5x, /%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823077598627.jpg 2x" sizes="auto" data-title="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823077598627.jpg" data-alt="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/media/16822141891122/16823077598627.jpg" width="1510" height="74" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>
+可得 0x010205104146a5840000000000000000 为固定值</p>
+<p><br><br><br><br><br><br><br><br></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2022-01-02 00:00:00">更新于 2022-01-02&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"><span><a href="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/index.md" title="阅读原始文档" class="link-to-markdown">阅读原始文档</a></span></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/" data-title="使用 LLDBTrace 还原算法"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/" data-title="使用 LLDBTrace 还原算法"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.111.3">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.2.18"><img class="fixit-icon" src="/fixit.min.svg" alt="FixIt logo" />&nbsp;FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/mdr668"target="_blank" rel="external nofollow noopener noreferrer">mdr</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">FixIt 主题在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>
