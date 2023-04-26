@@ -1,0 +1,1668 @@
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>iOS 系统调用号 - mdr's Blog</title><meta name=author content="mdr"><meta name=author-link content="https://github.com/mdr668"><meta name=description content="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"><meta name=keywords content="Hugo,FixIt"><meta itemprop=name content="iOS 系统调用号"><meta itemprop=description content="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"><meta itemprop=wordCount content="8806"><meta itemprop=keywords content><meta property="og:title" content="iOS 系统调用号"><meta property="og:description" content="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"><meta property="og:type" content="article"><meta property="og:url" content="/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7/"><meta property="article:section" content="posts"><meta name=twitter:card content="summary"><meta name=twitter:title content="iOS 系统调用号"><meta name=twitter:description content="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7/><link rel=next href=/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"iOS 系统调用号","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7\/"},"genre":"posts","wordcount":8806,"url":"\/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7\/","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"猫大人"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=NFT-013063-a2fc488f-00054799.webp srcset="/NFT-013063-a2fc488f-00054799.webp, NFT-013063-a2fc488f-00054799.webp 1.5x, /NFT-013063-a2fc488f-00054799.webp 2x" sizes=auto data-title="mdr's Blog" data-alt="mdr's Blog" width=240 height=240 class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地</span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 文章</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=NFT-013063-a2fc488f-00054799.webp srcset="/NFT-013063-a2fc488f-00054799.webp, NFT-013063-a2fc488f-00054799.webp 1.5x, /NFT-013063-a2fc488f-00054799.webp 2x" sizes=auto data-title=/NFT-013063-a2fc488f-00054799.webp data-alt=/NFT-013063-a2fc488f-00054799.webp width=240 height=240 class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地</span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 文章</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><main class=container><aside class=toc id=toc-auto></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>iOS 系统调用号</span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author><span class=author><i class="fa-solid fa-user-circle" aria-hidden=true></i>
+猫大人</span></span></div><div class=post-meta-line><span title="发布于 0001-01-01 00:00:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=0001-01-01>0001-01-01</time></span>&nbsp;<span title="更新于 0001-01-01 00:00:00"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=0001-01-01>0001-01-01</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden=true></i>约 8806 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden=true></i>预计阅读 18 分钟</span>&nbsp;</div></div><div class=content id=content><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
+</span><span class=lnt>168
+</span><span class=lnt>169
+</span><span class=lnt>170
+</span><span class=lnt>171
+</span><span class=lnt>172
+</span><span class=lnt>173
+</span><span class=lnt>174
+</span><span class=lnt>175
+</span><span class=lnt>176
+</span><span class=lnt>177
+</span><span class=lnt>178
+</span><span class=lnt>179
+</span><span class=lnt>180
+</span><span class=lnt>181
+</span><span class=lnt>182
+</span><span class=lnt>183
+</span><span class=lnt>184
+</span><span class=lnt>185
+</span><span class=lnt>186
+</span><span class=lnt>187
+</span><span class=lnt>188
+</span><span class=lnt>189
+</span><span class=lnt>190
+</span><span class=lnt>191
+</span><span class=lnt>192
+</span><span class=lnt>193
+</span><span class=lnt>194
+</span><span class=lnt>195
+</span><span class=lnt>196
+</span><span class=lnt>197
+</span><span class=lnt>198
+</span><span class=lnt>199
+</span><span class=lnt>200
+</span><span class=lnt>201
+</span><span class=lnt>202
+</span><span class=lnt>203
+</span><span class=lnt>204
+</span><span class=lnt>205
+</span><span class=lnt>206
+</span><span class=lnt>207
+</span><span class=lnt>208
+</span><span class=lnt>209
+</span><span class=lnt>210
+</span><span class=lnt>211
+</span><span class=lnt>212
+</span><span class=lnt>213
+</span><span class=lnt>214
+</span><span class=lnt>215
+</span><span class=lnt>216
+</span><span class=lnt>217
+</span><span class=lnt>218
+</span><span class=lnt>219
+</span><span class=lnt>220
+</span><span class=lnt>221
+</span><span class=lnt>222
+</span><span class=lnt>223
+</span><span class=lnt>224
+</span><span class=lnt>225
+</span><span class=lnt>226
+</span><span class=lnt>227
+</span><span class=lnt>228
+</span><span class=lnt>229
+</span><span class=lnt>230
+</span><span class=lnt>231
+</span><span class=lnt>232
+</span><span class=lnt>233
+</span><span class=lnt>234
+</span><span class=lnt>235
+</span><span class=lnt>236
+</span><span class=lnt>237
+</span><span class=lnt>238
+</span><span class=lnt>239
+</span><span class=lnt>240
+</span><span class=lnt>241
+</span><span class=lnt>242
+</span><span class=lnt>243
+</span><span class=lnt>244
+</span><span class=lnt>245
+</span><span class=lnt>246
+</span><span class=lnt>247
+</span><span class=lnt>248
+</span><span class=lnt>249
+</span><span class=lnt>250
+</span><span class=lnt>251
+</span><span class=lnt>252
+</span><span class=lnt>253
+</span><span class=lnt>254
+</span><span class=lnt>255
+</span><span class=lnt>256
+</span><span class=lnt>257
+</span><span class=lnt>258
+</span><span class=lnt>259
+</span><span class=lnt>260
+</span><span class=lnt>261
+</span><span class=lnt>262
+</span><span class=lnt>263
+</span><span class=lnt>264
+</span><span class=lnt>265
+</span><span class=lnt>266
+</span><span class=lnt>267
+</span><span class=lnt>268
+</span><span class=lnt>269
+</span><span class=lnt>270
+</span><span class=lnt>271
+</span><span class=lnt>272
+</span><span class=lnt>273
+</span><span class=lnt>274
+</span><span class=lnt>275
+</span><span class=lnt>276
+</span><span class=lnt>277
+</span><span class=lnt>278
+</span><span class=lnt>279
+</span><span class=lnt>280
+</span><span class=lnt>281
+</span><span class=lnt>282
+</span><span class=lnt>283
+</span><span class=lnt>284
+</span><span class=lnt>285
+</span><span class=lnt>286
+</span><span class=lnt>287
+</span><span class=lnt>288
+</span><span class=lnt>289
+</span><span class=lnt>290
+</span><span class=lnt>291
+</span><span class=lnt>292
+</span><span class=lnt>293
+</span><span class=lnt>294
+</span><span class=lnt>295
+</span><span class=lnt>296
+</span><span class=lnt>297
+</span><span class=lnt>298
+</span><span class=lnt>299
+</span><span class=lnt>300
+</span><span class=lnt>301
+</span><span class=lnt>302
+</span><span class=lnt>303
+</span><span class=lnt>304
+</span><span class=lnt>305
+</span><span class=lnt>306
+</span><span class=lnt>307
+</span><span class=lnt>308
+</span><span class=lnt>309
+</span><span class=lnt>310
+</span><span class=lnt>311
+</span><span class=lnt>312
+</span><span class=lnt>313
+</span><span class=lnt>314
+</span><span class=lnt>315
+</span><span class=lnt>316
+</span><span class=lnt>317
+</span><span class=lnt>318
+</span><span class=lnt>319
+</span><span class=lnt>320
+</span><span class=lnt>321
+</span><span class=lnt>322
+</span><span class=lnt>323
+</span><span class=lnt>324
+</span><span class=lnt>325
+</span><span class=lnt>326
+</span><span class=lnt>327
+</span><span class=lnt>328
+</span><span class=lnt>329
+</span><span class=lnt>330
+</span><span class=lnt>331
+</span><span class=lnt>332
+</span><span class=lnt>333
+</span><span class=lnt>334
+</span><span class=lnt>335
+</span><span class=lnt>336
+</span><span class=lnt>337
+</span><span class=lnt>338
+</span><span class=lnt>339
+</span><span class=lnt>340
+</span><span class=lnt>341
+</span><span class=lnt>342
+</span><span class=lnt>343
+</span><span class=lnt>344
+</span><span class=lnt>345
+</span><span class=lnt>346
+</span><span class=lnt>347
+</span><span class=lnt>348
+</span><span class=lnt>349
+</span><span class=lnt>350
+</span><span class=lnt>351
+</span><span class=lnt>352
+</span><span class=lnt>353
+</span><span class=lnt>354
+</span><span class=lnt>355
+</span><span class=lnt>356
+</span><span class=lnt>357
+</span><span class=lnt>358
+</span><span class=lnt>359
+</span><span class=lnt>360
+</span><span class=lnt>361
+</span><span class=lnt>362
+</span><span class=lnt>363
+</span><span class=lnt>364
+</span><span class=lnt>365
+</span><span class=lnt>366
+</span><span class=lnt>367
+</span><span class=lnt>368
+</span><span class=lnt>369
+</span><span class=lnt>370
+</span><span class=lnt>371
+</span><span class=lnt>372
+</span><span class=lnt>373
+</span><span class=lnt>374
+</span><span class=lnt>375
+</span><span class=lnt>376
+</span><span class=lnt>377
+</span><span class=lnt>378
+</span><span class=lnt>379
+</span><span class=lnt>380
+</span><span class=lnt>381
+</span><span class=lnt>382
+</span><span class=lnt>383
+</span><span class=lnt>384
+</span><span class=lnt>385
+</span><span class=lnt>386
+</span><span class=lnt>387
+</span><span class=lnt>388
+</span><span class=lnt>389
+</span><span class=lnt>390
+</span><span class=lnt>391
+</span><span class=lnt>392
+</span><span class=lnt>393
+</span><span class=lnt>394
+</span><span class=lnt>395
+</span><span class=lnt>396
+</span><span class=lnt>397
+</span><span class=lnt>398
+</span><span class=lnt>399
+</span><span class=lnt>400
+</span><span class=lnt>401
+</span><span class=lnt>402
+</span><span class=lnt>403
+</span><span class=lnt>404
+</span><span class=lnt>405
+</span><span class=lnt>406
+</span><span class=lnt>407
+</span><span class=lnt>408
+</span><span class=lnt>409
+</span><span class=lnt>410
+</span><span class=lnt>411
+</span><span class=lnt>412
+</span><span class=lnt>413
+</span><span class=lnt>414
+</span><span class=lnt>415
+</span><span class=lnt>416
+</span><span class=lnt>417
+</span><span class=lnt>418
+</span><span class=lnt>419
+</span><span class=lnt>420
+</span><span class=lnt>421
+</span><span class=lnt>422
+</span><span class=lnt>423
+</span><span class=lnt>424
+</span><span class=lnt>425
+</span><span class=lnt>426
+</span><span class=lnt>427
+</span><span class=lnt>428
+</span><span class=lnt>429
+</span><span class=lnt>430
+</span><span class=lnt>431
+</span><span class=lnt>432
+</span><span class=lnt>433
+</span><span class=lnt>434
+</span><span class=lnt>435
+</span><span class=lnt>436
+</span><span class=lnt>437
+</span><span class=lnt>438
+</span><span class=lnt>439
+</span><span class=lnt>440
+</span><span class=lnt>441
+</span><span class=lnt>442
+</span><span class=lnt>443
+</span><span class=lnt>444
+</span><span class=lnt>445
+</span><span class=lnt>446
+</span><span class=lnt>447
+</span><span class=lnt>448
+</span><span class=lnt>449
+</span><span class=lnt>450
+</span><span class=lnt>451
+</span><span class=lnt>452
+</span><span class=lnt>453
+</span><span class=lnt>454
+</span><span class=lnt>455
+</span><span class=lnt>456
+</span><span class=lnt>457
+</span><span class=lnt>458
+</span><span class=lnt>459
+</span><span class=lnt>460
+</span><span class=lnt>461
+</span><span class=lnt>462
+</span><span class=lnt>463
+</span><span class=lnt>464
+</span><span class=lnt>465
+</span><span class=lnt>466
+</span><span class=lnt>467
+</span><span class=lnt>468
+</span><span class=lnt>469
+</span><span class=lnt>470
+</span><span class=lnt>471
+</span><span class=lnt>472
+</span><span class=lnt>473
+</span><span class=lnt>474
+</span><span class=lnt>475
+</span><span class=lnt>476
+</span><span class=lnt>477
+</span><span class=lnt>478
+</span><span class=lnt>479
+</span><span class=lnt>480
+</span><span class=lnt>481
+</span><span class=lnt>482
+</span><span class=lnt>483
+</span><span class=lnt>484
+</span><span class=lnt>485
+</span><span class=lnt>486
+</span><span class=lnt>487
+</span><span class=lnt>488
+</span><span class=lnt>489
+</span><span class=lnt>490
+</span><span class=lnt>491
+</span><span class=lnt>492
+</span><span class=lnt>493
+</span><span class=lnt>494
+</span><span class=lnt>495
+</span><span class=lnt>496
+</span><span class=lnt>497
+</span><span class=lnt>498
+</span><span class=lnt>499
+</span><span class=lnt>500
+</span><span class=lnt>501
+</span><span class=lnt>502
+</span><span class=lnt>503
+</span><span class=lnt>504
+</span><span class=lnt>505
+</span><span class=lnt>506
+</span><span class=lnt>507
+</span><span class=lnt>508
+</span><span class=lnt>509
+</span><span class=lnt>510
+</span><span class=lnt>511
+</span><span class=lnt>512
+</span><span class=lnt>513
+</span><span class=lnt>514
+</span><span class=lnt>515
+</span><span class=lnt>516
+</span><span class=lnt>517
+</span><span class=lnt>518
+</span><span class=lnt>519
+</span><span class=lnt>520
+</span><span class=lnt>521
+</span><span class=lnt>522
+</span><span class=lnt>523
+</span><span class=lnt>524
+</span><span class=lnt>525
+</span><span class=lnt>526
+</span><span class=lnt>527
+</span><span class=lnt>528
+</span><span class=lnt>529
+</span><span class=lnt>530
+</span><span class=lnt>531
+</span><span class=lnt>532
+</span><span class=lnt>533
+</span><span class=lnt>534
+</span><span class=lnt>535
+</span><span class=lnt>536
+</span><span class=lnt>537
+</span><span class=lnt>538
+</span><span class=lnt>539
+</span><span class=lnt>540
+</span><span class=lnt>541
+</span><span class=lnt>542
+</span><span class=lnt>543
+</span><span class=lnt>544
+</span><span class=lnt>545
+</span><span class=lnt>546
+</span><span class=lnt>547
+</span><span class=lnt>548
+</span><span class=lnt>549
+</span><span class=lnt>550
+</span><span class=lnt>551
+</span><span class=lnt>552
+</span><span class=lnt>553
+</span><span class=lnt>554
+</span><span class=lnt>555
+</span><span class=lnt>556
+</span><span class=lnt>557
+</span><span class=lnt>558
+</span><span class=lnt>559
+</span><span class=lnt>560
+</span><span class=lnt>561
+</span><span class=lnt>562
+</span><span class=lnt>563
+</span><span class=lnt>564
+</span><span class=lnt>565
+</span><span class=lnt>566
+</span><span class=lnt>567
+</span><span class=lnt>568
+</span><span class=lnt>569
+</span><span class=lnt>570
+</span><span class=lnt>571
+</span><span class=lnt>572
+</span><span class=lnt>573
+</span><span class=lnt>574
+</span><span class=lnt>575
+</span><span class=lnt>576
+</span><span class=lnt>577
+</span><span class=lnt>578
+</span><span class=lnt>579
+</span><span class=lnt>580
+</span><span class=lnt>581
+</span><span class=lnt>582
+</span><span class=lnt>583
+</span><span class=lnt>584
+</span><span class=lnt>585
+</span><span class=lnt>586
+</span><span class=lnt>587
+</span><span class=lnt>588
+</span><span class=lnt>589
+</span><span class=lnt>590
+</span><span class=lnt>591
+</span><span class=lnt>592
+</span><span class=lnt>593
+</span><span class=lnt>594
+</span><span class=lnt>595
+</span><span class=lnt>596
+</span><span class=lnt>597
+</span><span class=lnt>598
+</span><span class=lnt>599
+</span><span class=lnt>600
+</span><span class=lnt>601
+</span><span class=lnt>602
+</span><span class=lnt>603
+</span><span class=lnt>604
+</span><span class=lnt>605
+</span><span class=lnt>606
+</span><span class=lnt>607
+</span><span class=lnt>608
+</span><span class=lnt>609
+</span><span class=lnt>610
+</span><span class=lnt>611
+</span><span class=lnt>612
+</span><span class=lnt>613
+</span><span class=lnt>614
+</span><span class=lnt>615
+</span><span class=lnt>616
+</span><span class=lnt>617
+</span><span class=lnt>618
+</span><span class=lnt>619
+</span><span class=lnt>620
+</span><span class=lnt>621
+</span><span class=lnt>622
+</span><span class=lnt>623
+</span><span class=lnt>624
+</span><span class=lnt>625
+</span><span class=lnt>626
+</span><span class=lnt>627
+</span><span class=lnt>628
+</span><span class=lnt>629
+</span><span class=lnt>630
+</span><span class=lnt>631
+</span><span class=lnt>632
+</span><span class=lnt>633
+</span><span class=lnt>634
+</span><span class=lnt>635
+</span><span class=lnt>636
+</span><span class=lnt>637
+</span><span class=lnt>638
+</span><span class=lnt>639
+</span><span class=lnt>640
+</span><span class=lnt>641
+</span><span class=lnt>642
+</span><span class=lnt>643
+</span><span class=lnt>644
+</span><span class=lnt>645
+</span><span class=lnt>646
+</span><span class=lnt>647
+</span><span class=lnt>648
+</span><span class=lnt>649
+</span><span class=lnt>650
+</span><span class=lnt>651
+</span><span class=lnt>652
+</span><span class=lnt>653
+</span><span class=lnt>654
+</span><span class=lnt>655
+</span><span class=lnt>656
+</span><span class=lnt>657
+</span><span class=lnt>658
+</span><span class=lnt>659
+</span><span class=lnt>660
+</span><span class=lnt>661
+</span><span class=lnt>662
+</span><span class=lnt>663
+</span><span class=lnt>664
+</span><span class=lnt>665
+</span><span class=lnt>666
+</span><span class=lnt>667
+</span><span class=lnt>668
+</span><span class=lnt>669
+</span><span class=lnt>670
+</span><span class=lnt>671
+</span><span class=lnt>672
+</span><span class=lnt>673
+</span><span class=lnt>674
+</span><span class=lnt>675
+</span><span class=lnt>676
+</span><span class=lnt>677
+</span><span class=lnt>678
+</span><span class=lnt>679
+</span><span class=lnt>680
+</span><span class=lnt>681
+</span><span class=lnt>682
+</span><span class=lnt>683
+</span><span class=lnt>684
+</span><span class=lnt>685
+</span><span class=lnt>686
+</span><span class=lnt>687
+</span><span class=lnt>688
+</span><span class=lnt>689
+</span><span class=lnt>690
+</span><span class=lnt>691
+</span><span class=lnt>692
+</span><span class=lnt>693
+</span><span class=lnt>694
+</span><span class=lnt>695
+</span><span class=lnt>696
+</span><span class=lnt>697
+</span><span class=lnt>698
+</span><span class=lnt>699
+</span><span class=lnt>700
+</span><span class=lnt>701
+</span><span class=lnt>702
+</span><span class=lnt>703
+</span><span class=lnt>704
+</span><span class=lnt>705
+</span><span class=lnt>706
+</span><span class=lnt>707
+</span><span class=lnt>708
+</span><span class=lnt>709
+</span><span class=lnt>710
+</span><span class=lnt>711
+</span><span class=lnt>712
+</span><span class=lnt>713
+</span><span class=lnt>714
+</span><span class=lnt>715
+</span><span class=lnt>716
+</span><span class=lnt>717
+</span><span class=lnt>718
+</span><span class=lnt>719
+</span><span class=lnt>720
+</span><span class=lnt>721
+</span><span class=lnt>722
+</span><span class=lnt>723
+</span><span class=lnt>724
+</span><span class=lnt>725
+</span><span class=lnt>726
+</span><span class=lnt>727
+</span><span class=lnt>728
+</span><span class=lnt>729
+</span><span class=lnt>730
+</span><span class=lnt>731
+</span><span class=lnt>732
+</span><span class=lnt>733
+</span><span class=lnt>734
+</span><span class=lnt>735
+</span><span class=lnt>736
+</span><span class=lnt>737
+</span><span class=lnt>738
+</span><span class=lnt>739
+</span><span class=lnt>740
+</span><span class=lnt>741
+</span><span class=lnt>742
+</span><span class=lnt>743
+</span><span class=lnt>744
+</span><span class=lnt>745
+</span><span class=lnt>746
+</span><span class=lnt>747
+</span><span class=lnt>748
+</span><span class=lnt>749
+</span><span class=lnt>750
+</span><span class=lnt>751
+</span><span class=lnt>752
+</span><span class=lnt>753
+</span><span class=lnt>754
+</span><span class=lnt>755
+</span><span class=lnt>756
+</span><span class=lnt>757
+</span><span class=lnt>758
+</span><span class=lnt>759
+</span><span class=lnt>760
+</span><span class=lnt>761
+</span><span class=lnt>762
+</span><span class=lnt>763
+</span><span class=lnt>764
+</span><span class=lnt>765
+</span><span class=lnt>766
+</span><span class=lnt>767
+</span><span class=lnt>768
+</span><span class=lnt>769
+</span><span class=lnt>770
+</span><span class=lnt>771
+</span><span class=lnt>772
+</span><span class=lnt>773
+</span><span class=lnt>774
+</span><span class=lnt>775
+</span><span class=lnt>776
+</span><span class=lnt>777
+</span><span class=lnt>778
+</span><span class=lnt>779
+</span><span class=lnt>780
+</span><span class=lnt>781
+</span><span class=lnt>782
+</span><span class=lnt>783
+</span><span class=lnt>784
+</span><span class=lnt>785
+</span><span class=lnt>786
+</span><span class=lnt>787
+</span><span class=lnt>788
+</span><span class=lnt>789
+</span><span class=lnt>790
+</span><span class=lnt>791
+</span><span class=lnt>792
+</span><span class=lnt>793
+</span><span class=lnt>794
+</span><span class=lnt>795
+</span><span class=lnt>796
+</span><span class=lnt>797
+</span><span class=lnt>798
+</span><span class=lnt>799
+</span><span class=lnt>800
+</span><span class=lnt>801
+</span><span class=lnt>802
+</span><span class=lnt>803
+</span><span class=lnt>804
+</span><span class=lnt>805
+</span><span class=lnt>806
+</span><span class=lnt>807
+</span><span class=lnt>808
+</span><span class=lnt>809
+</span><span class=lnt>810
+</span><span class=lnt>811
+</span><span class=lnt>812
+</span><span class=lnt>813
+</span><span class=lnt>814
+</span><span class=lnt>815
+</span><span class=lnt>816
+</span><span class=lnt>817
+</span><span class=lnt>818
+</span><span class=lnt>819
+</span><span class=lnt>820
+</span><span class=lnt>821
+</span><span class=lnt>822
+</span><span class=lnt>823
+</span><span class=lnt>824
+</span><span class=lnt>825
+</span><span class=lnt>826
+</span><span class=lnt>827
+</span><span class=lnt>828
+</span><span class=lnt>829
+</span><span class=lnt>830
+</span><span class=lnt>831
+</span><span class=lnt>832
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>0	AUE_NULL	ALL	{ int nosys(void); }   { indirect syscall }
+</span></span><span class=line><span class=cl>1	AUE_EXIT	ALL	{ void exit(int rval) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>2	AUE_FORK	ALL	{ int fork(void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>3	AUE_NULL	ALL	{ user_ssize_t read(int fd, user_addr_t cbuf, user_size_t nbyte); }
+</span></span><span class=line><span class=cl>4	AUE_NULL	ALL	{ user_ssize_t write(int fd, user_addr_t cbuf, user_size_t nbyte); }
+</span></span><span class=line><span class=cl>5	AUE_OPEN_RWTC	ALL	{ int open(user_addr_t path, int flags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>6	AUE_CLOSE	ALL	{ int sys_close(int fd); }
+</span></span><span class=line><span class=cl>7	AUE_WAIT4	ALL	{ int wait4(int pid, user_addr_t status, int options, user_addr_t rusage) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>8	AUE_NULL	ALL	{ int enosys(void); }   { old creat }
+</span></span><span class=line><span class=cl>9	AUE_LINK	ALL	{ int link(user_addr_t path, user_addr_t link); }
+</span></span><span class=line><span class=cl>10	AUE_UNLINK	ALL	{ int unlink(user_addr_t path) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>11	AUE_NULL	ALL	{ int enosys(void); }   { old execv }
+</span></span><span class=line><span class=cl>12	AUE_CHDIR	ALL	{ int chdir(user_addr_t path); }
+</span></span><span class=line><span class=cl>13	AUE_FCHDIR	ALL	{ int fchdir(int fd); }
+</span></span><span class=line><span class=cl>14	AUE_MKNOD	ALL	{ int mknod(user_addr_t path, int mode, int dev); }
+</span></span><span class=line><span class=cl>15	AUE_CHMOD	ALL	{ int chmod(user_addr_t path, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>16	AUE_CHOWN	ALL	{ int chown(user_addr_t path, int uid, int gid); }
+</span></span><span class=line><span class=cl>17	AUE_NULL	ALL	{ int enosys(void); }   { old break }
+</span></span><span class=line><span class=cl>18	AUE_GETFSSTAT	ALL	{ int getfsstat(user_addr_t buf, int bufsize, int flags); }
+</span></span><span class=line><span class=cl>19	AUE_NULL	ALL	{ int enosys(void); }   { old lseek }
+</span></span><span class=line><span class=cl>20	AUE_GETPID	ALL	{ int getpid(void); }
+</span></span><span class=line><span class=cl>21	AUE_NULL	ALL	{ int enosys(void); }   { old mount }
+</span></span><span class=line><span class=cl>22	AUE_NULL	ALL	{ int enosys(void); }   { old umount }
+</span></span><span class=line><span class=cl>23	AUE_SETUID	ALL	{ int setuid(uid_t uid); }
+</span></span><span class=line><span class=cl>24	AUE_GETUID	ALL	{ int getuid(void); }
+</span></span><span class=line><span class=cl>25	AUE_GETEUID	ALL	{ int geteuid(void); }
+</span></span><span class=line><span class=cl>26	AUE_PTRACE	ALL	{ int ptrace(int req, pid_t pid, caddr_t addr, int data); }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>27	AUE_RECVMSG	ALL	{ int recvmsg(int s, struct msghdr *msg, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>28	AUE_SENDMSG	ALL	{ int sendmsg(int s, caddr_t msg, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>29	AUE_RECVFROM	ALL	{ int recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from, int *fromlenaddr) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>30	AUE_ACCEPT	ALL	{ int accept(int s, caddr_t name, socklen_t	*anamelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>31	AUE_GETPEERNAME	ALL	{ int getpeername(int fdes, caddr_t asa, socklen_t *alen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>32	AUE_GETSOCKNAME	ALL	{ int getsockname(int fdes, caddr_t asa, socklen_t *alen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>27	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>28	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>29	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>30	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>31	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>32	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>33	AUE_ACCESS	ALL	{ int access(user_addr_t path, int flags); }
+</span></span><span class=line><span class=cl>34	AUE_CHFLAGS	ALL	{ int chflags(char *path, int flags); }
+</span></span><span class=line><span class=cl>35	AUE_FCHFLAGS	ALL	{ int fchflags(int fd, int flags); }
+</span></span><span class=line><span class=cl>36	AUE_SYNC	ALL	{ int sync(void); }
+</span></span><span class=line><span class=cl>37	AUE_KILL	ALL	{ int kill(int pid, int signum, int posix) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>38	AUE_NULL	ALL	{ int nosys(void); }   { old stat  }
+</span></span><span class=line><span class=cl>39	AUE_GETPPID	ALL	{ int getppid(void); }
+</span></span><span class=line><span class=cl>40	AUE_NULL	ALL	{ int nosys(void); }   { old lstat }
+</span></span><span class=line><span class=cl>41	AUE_DUP		ALL	{ int sys_dup(u_int fd); }
+</span></span><span class=line><span class=cl>42	AUE_PIPE	ALL	{ int pipe(void); }
+</span></span><span class=line><span class=cl>43	AUE_GETEGID	ALL	{ int getegid(void); }
+</span></span><span class=line><span class=cl>44	AUE_NULL	ALL	{ int nosys(void); } { old profil }
+</span></span><span class=line><span class=cl>45	AUE_NULL	ALL	{ int nosys(void); } { old ktrace }
+</span></span><span class=line><span class=cl>46	AUE_SIGACTION	ALL	{ int sigaction(int signum, struct __sigaction *nsa, struct sigaction *osa) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>47	AUE_GETGID	ALL	{ int getgid(void); }
+</span></span><span class=line><span class=cl>48	AUE_SIGPROCMASK	ALL	{ int sigprocmask(int how, user_addr_t mask, user_addr_t omask); }
+</span></span><span class=line><span class=cl>49	AUE_GETLOGIN	ALL	{ int getlogin(char *namebuf, u_int namelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>50	AUE_SETLOGIN	ALL	{ int setlogin(char *namebuf) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>51	AUE_ACCT	ALL	{ int acct(char *path); }
+</span></span><span class=line><span class=cl>52	AUE_SIGPENDING	ALL	{ int sigpending(struct sigvec *osv); }
+</span></span><span class=line><span class=cl>53	AUE_SIGALTSTACK	ALL	{ int sigaltstack(struct sigaltstack *nss, struct sigaltstack *oss) NO_SYSCALL_STUB ; }
+</span></span><span class=line><span class=cl>54	AUE_IOCTL	ALL	{ int ioctl(int fd, u_long com, caddr_t data) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>55	AUE_REBOOT	ALL	{ int reboot(int opt, char *msg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>56	AUE_REVOKE	ALL	{ int revoke(char *path); }
+</span></span><span class=line><span class=cl>57	AUE_SYMLINK	ALL	{ int symlink(char *path, char *link); }
+</span></span><span class=line><span class=cl>58	AUE_READLINK	ALL	{ int readlink(char *path, char *buf, int count); }
+</span></span><span class=line><span class=cl>59	AUE_EXECVE	ALL	{ int execve(char *fname, char **argp, char **envp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>60	AUE_UMASK	ALL	{ int umask(int newmask); }
+</span></span><span class=line><span class=cl>61	AUE_CHROOT	ALL	{ int chroot(user_addr_t path); }
+</span></span><span class=line><span class=cl>62	AUE_NULL	ALL	{ int nosys(void); }   { old fstat }
+</span></span><span class=line><span class=cl>63	AUE_NULL	ALL	{ int nosys(void); }   { used internally and reserved }
+</span></span><span class=line><span class=cl>64	AUE_NULL	ALL	{ int nosys(void); }   { old getpagesize }
+</span></span><span class=line><span class=cl>65	AUE_MSYNC	ALL	{ int msync(caddr_t addr, size_t len, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_VFORK
+</span></span><span class=line><span class=cl>66	AUE_VFORK	ALL	{ int vfork(void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>66	AUE_NULL	ALL	{ int nosys(void); }   { old vfork }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>67	AUE_NULL	ALL	{ int nosys(void); }   { old vread }
+</span></span><span class=line><span class=cl>68	AUE_NULL	ALL	{ int nosys(void); }   { old vwrite }
+</span></span><span class=line><span class=cl>69	AUE_NULL	ALL	{ int nosys(void); }   { old sbrk }
+</span></span><span class=line><span class=cl>70	AUE_NULL	ALL	{ int nosys(void); }   { old sstk }
+</span></span><span class=line><span class=cl>71	AUE_NULL	ALL	{ int nosys(void); }   { old mmap }
+</span></span><span class=line><span class=cl>72	AUE_NULL	ALL	{ int nosys(void); }   { old vadvise }
+</span></span><span class=line><span class=cl>73	AUE_MUNMAP	ALL	{ int munmap(caddr_t addr, size_t len) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>74	AUE_MPROTECT	ALL	{ int mprotect(caddr_t addr, size_t len, int prot) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>75	AUE_MADVISE	ALL	{ int madvise(caddr_t addr, size_t len, int behav); }
+</span></span><span class=line><span class=cl>76	AUE_NULL	ALL	{ int nosys(void); }   { old vhangup }
+</span></span><span class=line><span class=cl>77	AUE_NULL	ALL	{ int nosys(void); }   { old vlimit }
+</span></span><span class=line><span class=cl>78	AUE_MINCORE	ALL	{ int mincore(user_addr_t addr, user_size_t len, user_addr_t vec); }
+</span></span><span class=line><span class=cl>79	AUE_GETGROUPS	ALL	{ int getgroups(u_int gidsetsize, gid_t *gidset); }
+</span></span><span class=line><span class=cl>80	AUE_SETGROUPS	ALL	{ int setgroups(u_int gidsetsize, gid_t *gidset); }
+</span></span><span class=line><span class=cl>81	AUE_GETPGRP	ALL	{ int getpgrp(void); }
+</span></span><span class=line><span class=cl>82	AUE_SETPGRP	ALL	{ int setpgid(int pid, int pgid); }
+</span></span><span class=line><span class=cl>83	AUE_SETITIMER	ALL	{ int setitimer(u_int which, struct itimerval *itv, struct itimerval *oitv); }
+</span></span><span class=line><span class=cl>84	AUE_NULL	ALL	{ int nosys(void); }   { old wait }
+</span></span><span class=line><span class=cl>85	AUE_SWAPON 	ALL	{ int swapon(void); }
+</span></span><span class=line><span class=cl>86	AUE_GETITIMER	ALL	{ int getitimer(u_int which, struct itimerval *itv); }
+</span></span><span class=line><span class=cl>87	AUE_NULL	ALL	{ int nosys(void); }   { old gethostname }
+</span></span><span class=line><span class=cl>88	AUE_NULL	ALL	{ int nosys(void); }   { old sethostname }
+</span></span><span class=line><span class=cl>89	AUE_GETDTABLESIZE	ALL	{ int sys_getdtablesize(void); }
+</span></span><span class=line><span class=cl>90	AUE_DUP2	ALL	{ int sys_dup2(u_int from, u_int to); }
+</span></span><span class=line><span class=cl>91	AUE_NULL	ALL	{ int nosys(void); }   { old getdopt }
+</span></span><span class=line><span class=cl>92	AUE_FCNTL	ALL	{ int sys_fcntl(int fd, int cmd, long arg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>93	AUE_SELECT	ALL	{ int select(int nd, u_int32_t *in, u_int32_t *ou, u_int32_t *ex, struct timeval *tv) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>94	AUE_NULL	ALL	{ int nosys(void); }   { old setdopt }
+</span></span><span class=line><span class=cl>95	AUE_FSYNC	ALL	{ int fsync(int fd); }
+</span></span><span class=line><span class=cl>96	AUE_SETPRIORITY	ALL	{ int setpriority(int which, id_t who, int prio) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>97	AUE_SOCKET	ALL	{ int socket(int domain, int type, int protocol); }
+</span></span><span class=line><span class=cl>98	AUE_CONNECT	ALL	{ int connect(int s, caddr_t name, socklen_t namelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>97	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>98	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>99	AUE_NULL	ALL	{ int nosys(void); }   { old accept }
+</span></span><span class=line><span class=cl>100	AUE_GETPRIORITY	ALL	{ int getpriority(int which, id_t who); }
+</span></span><span class=line><span class=cl>101	AUE_NULL	ALL	{ int nosys(void); }   { old send }
+</span></span><span class=line><span class=cl>102	AUE_NULL	ALL	{ int nosys(void); }   { old recv }
+</span></span><span class=line><span class=cl>103	AUE_NULL	ALL	{ int nosys(void); }   { old sigreturn }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>104	AUE_BIND	ALL	{ int bind(int s, caddr_t name, socklen_t namelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>105	AUE_SETSOCKOPT	ALL	{ int setsockopt(int s, int level, int name, caddr_t val, socklen_t valsize); }
+</span></span><span class=line><span class=cl>106	AUE_LISTEN	ALL	{ int listen(int s, int backlog) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>104	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>105	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>106	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>107	AUE_NULL	ALL	{ int nosys(void); }   { old vtimes }
+</span></span><span class=line><span class=cl>108	AUE_NULL	ALL	{ int nosys(void); }   { old sigvec }
+</span></span><span class=line><span class=cl>109	AUE_NULL	ALL	{ int nosys(void); }   { old sigblock }
+</span></span><span class=line><span class=cl>110	AUE_NULL	ALL	{ int nosys(void); }   { old sigsetmask }
+</span></span><span class=line><span class=cl>111	AUE_NULL	ALL	{ int sigsuspend(sigset_t mask) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>112	AUE_NULL	ALL	{ int nosys(void); }   { old sigstack }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>113	AUE_NULL	ALL	{ int nosys(void); }   { old recvmsg }
+</span></span><span class=line><span class=cl>114	AUE_NULL	ALL	{ int nosys(void); }   { old sendmsg }	
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>113	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>114	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>115	AUE_NULL	ALL	{ int nosys(void); }   { old vtrace }
+</span></span><span class=line><span class=cl>116	AUE_GETTIMEOFDAY	ALL	{ int gettimeofday(struct timeval *tp, struct timezone *tzp, uint64_t *mach_absolute_time) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>117	AUE_GETRUSAGE	ALL	{ int getrusage(int who, struct rusage *rusage); }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>118	AUE_GETSOCKOPT	ALL	{ int getsockopt(int s, int level, int name, caddr_t val, socklen_t *avalsize); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>118	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>119	AUE_NULL	ALL	{ int nosys(void); }   { old resuba }
+</span></span><span class=line><span class=cl>120	AUE_READV	ALL	{ user_ssize_t readv(int fd, struct iovec *iovp, u_int iovcnt); }
+</span></span><span class=line><span class=cl>121	AUE_WRITEV	ALL	{ user_ssize_t writev(int fd, struct iovec *iovp, u_int iovcnt); }
+</span></span><span class=line><span class=cl>122	AUE_SETTIMEOFDAY	ALL	{ int settimeofday(struct timeval *tv, struct timezone *tzp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>123	AUE_FCHOWN	ALL	{ int fchown(int fd, int uid, int gid); }
+</span></span><span class=line><span class=cl>124	AUE_FCHMOD	ALL	{ int fchmod(int fd, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>125	AUE_NULL	ALL	{ int nosys(void); }   { old recvfrom }
+</span></span><span class=line><span class=cl>126	AUE_SETREUID	ALL	{ int setreuid(uid_t ruid, uid_t euid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>127	AUE_SETREGID	ALL	{ int setregid(gid_t rgid, gid_t egid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>128	AUE_RENAME	ALL	{ int rename(char *from, char *to) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>129	AUE_NULL	ALL	{ int nosys(void); }   { old truncate }
+</span></span><span class=line><span class=cl>130	AUE_NULL	ALL	{ int nosys(void); }   { old ftruncate }
+</span></span><span class=line><span class=cl>131	AUE_FLOCK	ALL	{ int sys_flock(int fd, int how); }
+</span></span><span class=line><span class=cl>132	AUE_MKFIFO	ALL	{ int mkfifo(user_addr_t path, int mode); }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>133	AUE_SENDTO	ALL	{ int sendto(int s, caddr_t buf, size_t len, int flags, caddr_t to, socklen_t tolen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>134	AUE_SHUTDOWN	ALL	{ int shutdown(int s, int how); }
+</span></span><span class=line><span class=cl>135	AUE_SOCKETPAIR	ALL	{ int socketpair(int domain, int type, int protocol, int *rsv) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>133	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>134	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>135	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>136	AUE_MKDIR	ALL	{ int mkdir(user_addr_t path, int mode); }
+</span></span><span class=line><span class=cl>137	AUE_RMDIR	ALL	{ int rmdir(char *path) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>138	AUE_UTIMES	ALL	{ int utimes(char *path, struct timeval *tptr); }
+</span></span><span class=line><span class=cl>139	AUE_FUTIMES	ALL	{ int futimes(int fd, struct timeval *tptr); }
+</span></span><span class=line><span class=cl>140	AUE_ADJTIME	ALL	{ int adjtime(struct timeval *delta, struct timeval *olddelta); }
+</span></span><span class=line><span class=cl>141	AUE_NULL	ALL	{ int nosys(void); }   { old getpeername }
+</span></span><span class=line><span class=cl>142	AUE_SYSCTL	ALL	{ int gethostuuid(unsigned char *uuid_buf, const struct timespec *timeoutp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>143	AUE_NULL	ALL	{ int nosys(void); }   { old sethostid 	}
+</span></span><span class=line><span class=cl>144	AUE_NULL	ALL	{ int nosys(void); }   { old getrlimit }
+</span></span><span class=line><span class=cl>145	AUE_NULL	ALL	{ int nosys(void); }   { old setrlimit }
+</span></span><span class=line><span class=cl>146	AUE_NULL	ALL	{ int nosys(void); }   { old killpg }
+</span></span><span class=line><span class=cl>147	AUE_SETSID	ALL	{ int setsid(void); }
+</span></span><span class=line><span class=cl>148	AUE_NULL	ALL	{ int nosys(void); }   { old setquota }
+</span></span><span class=line><span class=cl>149	AUE_NULL	ALL	{ int nosys(void); }   { old qquota }
+</span></span><span class=line><span class=cl>150	AUE_NULL	ALL	{ int nosys(void); }   { old getsockname }
+</span></span><span class=line><span class=cl>151	AUE_GETPGID	ALL	{ int getpgid(pid_t pid); }
+</span></span><span class=line><span class=cl>152	AUE_SETPRIVEXEC	ALL	{ int setprivexec(int flag); }
+</span></span><span class=line><span class=cl>153	AUE_PREAD	ALL	{ user_ssize_t pread(int fd, user_addr_t buf, user_size_t nbyte, off_t offset); }
+</span></span><span class=line><span class=cl>154	AUE_PWRITE	ALL	{ user_ssize_t pwrite(int fd, user_addr_t buf, user_size_t nbyte, off_t offset); }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>#if NFSSERVER	/* XXX */
+</span></span><span class=line><span class=cl>155	AUE_NFS_SVC	ALL	{ int nfssvc(int flag, caddr_t argp); } 
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>155	AUE_NULL	ALL	{ int nosys(void); } 
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>156	AUE_NULL	ALL	{ int nosys(void); }   { old getdirentries }
+</span></span><span class=line><span class=cl>157	AUE_STATFS	ALL	{ int statfs(char *path, struct statfs *buf); }
+</span></span><span class=line><span class=cl>158	AUE_FSTATFS	ALL	{ int fstatfs(int fd, struct statfs *buf); }
+</span></span><span class=line><span class=cl>159	AUE_UNMOUNT	ALL	{ int unmount(user_addr_t path, int flags); }
+</span></span><span class=line><span class=cl>160	AUE_NULL	ALL	{ int nosys(void); }   { old async_daemon }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>#if NFSSERVER	/* XXX */
+</span></span><span class=line><span class=cl>161	AUE_NFS_GETFH	ALL	{ int getfh(char *fname, fhandle_t *fhp); } 
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>161	AUE_NULL	ALL	{ int nosys(void); } 
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>162	AUE_NULL	ALL	{ int nosys(void); }   { old getdomainname }
+</span></span><span class=line><span class=cl>163	AUE_NULL	ALL	{ int nosys(void); }   { old setdomainname }
+</span></span><span class=line><span class=cl>164	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>165	AUE_QUOTACTL	ALL	{ int quotactl(const char *path, int cmd, int uid, caddr_t arg); }
+</span></span><span class=line><span class=cl>166	AUE_NULL	ALL	{ int nosys(void); }   { old exportfs }
+</span></span><span class=line><span class=cl>167	AUE_MOUNT	ALL	{ int mount(char *type, char *path, int flags, caddr_t data); }
+</span></span><span class=line><span class=cl>168	AUE_NULL	ALL	{ int nosys(void); }   { old ustat }
+</span></span><span class=line><span class=cl>169	AUE_CSOPS	ALL	{ int csops(pid_t pid, uint32_t ops, user_addr_t useraddr, user_size_t usersize); }
+</span></span><span class=line><span class=cl>170	AUE_CSOPS	ALL	{ int csops_audittoken(pid_t pid, uint32_t ops, user_addr_t useraddr, user_size_t usersize, user_addr_t uaudittoken); }
+</span></span><span class=line><span class=cl>171	AUE_NULL	ALL	{ int nosys(void); }   { old wait3 }
+</span></span><span class=line><span class=cl>172	AUE_NULL	ALL	{ int nosys(void); }   { old rpause	}	
+</span></span><span class=line><span class=cl>173	AUE_WAITID	ALL	{ int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options); }
+</span></span><span class=line><span class=cl>174	AUE_NULL	ALL	{ int nosys(void); }   { old getdents }
+</span></span><span class=line><span class=cl>175	AUE_NULL	ALL	{ int nosys(void); }   { old gc_control }
+</span></span><span class=line><span class=cl>176	AUE_NULL	ALL	{ int nosys(void); }   { old add_profil }
+</span></span><span class=line><span class=cl>177	AUE_NULL	ALL	{ int kdebug_typefilter(void** addr, size_t* size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>178	AUE_NULL	ALL 	{ uint64_t kdebug_trace_string(uint32_t debugid, uint64_t str_id, const char *str) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>179	AUE_NULL	ALL 	{ int kdebug_trace64(uint32_t code, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>180	AUE_NULL	ALL 	{ int kdebug_trace(uint32_t code, u_long arg1, u_long arg2, u_long arg3, u_long arg4) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>181	AUE_SETGID	ALL	{ int setgid(gid_t gid); }
+</span></span><span class=line><span class=cl>182	AUE_SETEGID	ALL	{ int setegid(gid_t egid); }
+</span></span><span class=line><span class=cl>183	AUE_SETEUID	ALL	{ int seteuid(uid_t euid); }
+</span></span><span class=line><span class=cl>184	AUE_SIGRETURN	ALL	{ int sigreturn(struct ucontext *uctx, int infostyle, user_addr_t token) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>185	AUE_NULL	ALL 	{ int enosys(void); } { old chud }
+</span></span><span class=line><span class=cl>186	AUE_NULL	ALL	{ int thread_selfcounts(int type, user_addr_t buf, user_size_t nbytes); }
+</span></span><span class=line><span class=cl>187	AUE_FDATASYNC	ALL	{ int fdatasync(int fd); }
+</span></span><span class=line><span class=cl>188	AUE_STAT	ALL	{ int stat(user_addr_t path, user_addr_t ub); }
+</span></span><span class=line><span class=cl>189	AUE_FSTAT	ALL	{ int sys_fstat(int fd, user_addr_t ub); }
+</span></span><span class=line><span class=cl>190	AUE_LSTAT	ALL	{ int lstat(user_addr_t path, user_addr_t ub); }
+</span></span><span class=line><span class=cl>191	AUE_PATHCONF	ALL	{ int pathconf(char *path, int name); }
+</span></span><span class=line><span class=cl>192	AUE_FPATHCONF	ALL	{ int sys_fpathconf(int fd, int name); }
+</span></span><span class=line><span class=cl>193	AUE_NULL	ALL	{ int nosys(void); }	{ old getfsstat }
+</span></span><span class=line><span class=cl>194	AUE_GETRLIMIT	ALL	{ int getrlimit(u_int which, struct rlimit *rlp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>195	AUE_SETRLIMIT	ALL	{ int setrlimit(u_int which, struct rlimit *rlp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>196	AUE_GETDIRENTRIES	ALL	{ int getdirentries(int fd, char *buf, u_int count, long *basep); }
+</span></span><span class=line><span class=cl>197	AUE_MMAP	ALL	{ user_addr_t mmap(caddr_t addr, size_t len, int prot, int flags, int fd, off_t pos) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>198	AUE_NULL	ALL	{ int nosys(void); } 	{ old __syscall }
+</span></span><span class=line><span class=cl>199	AUE_LSEEK	ALL	{ off_t lseek(int fd, off_t offset, int whence); }
+</span></span><span class=line><span class=cl>200	AUE_TRUNCATE	ALL	{ int truncate(char *path, off_t length); }
+</span></span><span class=line><span class=cl>201	AUE_FTRUNCATE	ALL	{ int ftruncate(int fd, off_t length); }
+</span></span><span class=line><span class=cl>202	AUE_SYSCTL	ALL 	{ int sysctl(int *name, u_int namelen, void *old, size_t *oldlenp, void *new, size_t newlen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>203	AUE_MLOCK	ALL	{ int mlock(caddr_t addr, size_t len); }
+</span></span><span class=line><span class=cl>204	AUE_MUNLOCK	ALL	{ int munlock(caddr_t addr, size_t len); }
+</span></span><span class=line><span class=cl>205	AUE_UNDELETE	ALL	{ int undelete(user_addr_t path); }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>206	AUE_NULL	ALL	{ int nosys(void); } { old ATsocket }
+</span></span><span class=line><span class=cl>207	AUE_NULL	ALL	{ int nosys(void); } { old ATgetmsg }
+</span></span><span class=line><span class=cl>208	AUE_NULL	ALL	{ int nosys(void); } { old ATputmsg }
+</span></span><span class=line><span class=cl>209	AUE_NULL	ALL	{ int nosys(void); } { old ATsndreq }
+</span></span><span class=line><span class=cl>210	AUE_NULL	ALL	{ int nosys(void); } { old ATsndrsp }
+</span></span><span class=line><span class=cl>211	AUE_NULL	ALL	{ int nosys(void); } { old ATgetreq }
+</span></span><span class=line><span class=cl>212	AUE_NULL	ALL	{ int nosys(void); } { old ATgetrsp }
+</span></span><span class=line><span class=cl>213	AUE_NULL	ALL	{ int nosys(void); } 	{ Reserved for AppleTalk }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>214	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>215	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>; System Calls 216 - 230 are reserved for calls to support HFS/HFS Plus
+</span></span><span class=line><span class=cl>; file system semantics. Currently, we only use 215-227.  The rest is
+</span></span><span class=line><span class=cl>; for future expansion in anticipation of new MacOS APIs for HFS Plus.
+</span></span><span class=line><span class=cl>; These calls are not conditionalized because while they are specific
+</span></span><span class=line><span class=cl>; to HFS semantics, they are not specific to the HFS filesystem.
+</span></span><span class=line><span class=cl>; We expect all filesystems to recognize the call and report that it is
+</span></span><span class=line><span class=cl>; not supported or to actually implement it.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>; 216-&gt; 219 used to be mkcomplex and {f,l}statv variants. They are gone now.
+</span></span><span class=line><span class=cl>216	AUE_NULL	ALL	{ int open_dprotected_np(user_addr_t path, int flags, int class, int dpflags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>217	AUE_FSGETPATH_EXTENDED	ALL	{ user_ssize_t fsgetpath_ext(user_addr_t buf, size_t bufsize, user_addr_t fsid, uint64_t objid, uint32_t options); }
+</span></span><span class=line><span class=cl>218	AUE_NULL	ALL	{ int nosys(void); }	{ old lstatv }
+</span></span><span class=line><span class=cl>219	AUE_NULL	ALL	{ int nosys(void); }	{ old fstatv }
+</span></span><span class=line><span class=cl>220	AUE_GETATTRLIST	ALL	{ int getattrlist(const char *path, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, u_long options) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>221	AUE_SETATTRLIST	ALL	{ int setattrlist(const char *path, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, u_long options) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>222	AUE_GETDIRENTRIESATTR	ALL	{ int getdirentriesattr(int fd, struct attrlist *alist, void *buffer, size_t buffersize, u_long *count, u_long *basep, u_long *newstate, u_long options); }
+</span></span><span class=line><span class=cl>223	AUE_EXCHANGEDATA	ALL	{ int exchangedata(const char *path1, const char *path2, u_long options); }
+</span></span><span class=line><span class=cl>224	AUE_NULL		ALL { int nosys(void); } { old checkuseraccess or fsgetpath }
+</span></span><span class=line><span class=cl>225	AUE_SEARCHFS	ALL	{ int searchfs(const char *path, struct fssearchblock *searchblock, uint32_t *nummatches, uint32_t scriptcode, uint32_t options, struct searchstate *state); }
+</span></span><span class=line><span class=cl>226	AUE_DELETE	ALL	{ int delete(user_addr_t path) NO_SYSCALL_STUB; }       { private delete (Carbon semantics) }
+</span></span><span class=line><span class=cl>227	AUE_COPYFILE	ALL	{ int copyfile(char *from, char *to, int mode, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>228	AUE_FGETATTRLIST	ALL	{ int fgetattrlist(int fd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, u_long options); }
+</span></span><span class=line><span class=cl>229	AUE_FSETATTRLIST	ALL	{ int fsetattrlist(int fd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, u_long options); }
+</span></span><span class=line><span class=cl>230	AUE_POLL	ALL	{ int poll(struct pollfd *fds, u_int nfds, int timeout); }
+</span></span><span class=line><span class=cl>231	AUE_NULL	ALL	{ int nosys(void); } { old watchevent }
+</span></span><span class=line><span class=cl>232	AUE_NULL	ALL	{ int nosys(void); } { old waitevent }
+</span></span><span class=line><span class=cl>233	AUE_NULL	ALL	{ int nosys(void); } { old modwatch }
+</span></span><span class=line><span class=cl>234	AUE_GETXATTR	ALL	{ user_ssize_t getxattr(user_addr_t path, user_addr_t attrname, user_addr_t value, size_t size, uint32_t position, int options); }
+</span></span><span class=line><span class=cl>235	AUE_FGETXATTR	ALL	{ user_ssize_t fgetxattr(int fd, user_addr_t attrname, user_addr_t value, size_t size, uint32_t position, int options); }
+</span></span><span class=line><span class=cl>236	AUE_SETXATTR	ALL	{ int setxattr(user_addr_t path, user_addr_t attrname, user_addr_t value, size_t size, uint32_t position, int options); }
+</span></span><span class=line><span class=cl>237	AUE_FSETXATTR	ALL	{ int fsetxattr(int fd, user_addr_t attrname, user_addr_t value, size_t size, uint32_t position, int options); }
+</span></span><span class=line><span class=cl>238	AUE_REMOVEXATTR	ALL	{ int removexattr(user_addr_t path, user_addr_t attrname, int options); }
+</span></span><span class=line><span class=cl>239	AUE_FREMOVEXATTR	ALL	{ int fremovexattr(int fd, user_addr_t attrname, int options); }
+</span></span><span class=line><span class=cl>240	AUE_LISTXATTR	ALL	{ user_ssize_t listxattr(user_addr_t path, user_addr_t namebuf, size_t bufsize, int options); }
+</span></span><span class=line><span class=cl>241	AUE_FLISTXATTR	ALL	{ user_ssize_t flistxattr(int fd, user_addr_t namebuf, size_t bufsize, int options); }
+</span></span><span class=line><span class=cl>242	AUE_FSCTL	ALL	{ int fsctl(const char *path, u_long cmd, caddr_t data, u_int options); }
+</span></span><span class=line><span class=cl>243	AUE_INITGROUPS	ALL	{ int initgroups(u_int gidsetsize, gid_t *gidset, int gmuid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>244	AUE_POSIX_SPAWN	ALL	{ int posix_spawn(pid_t *pid, const char *path, const struct _posix_spawn_args_desc *adesc, char **argv, char **envp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>245	AUE_FFSCTL	ALL	{ int ffsctl(int fd, u_long cmd, caddr_t data, u_int options); }
+</span></span><span class=line><span class=cl>246	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>#if NFSCLIENT	/* XXX */
+</span></span><span class=line><span class=cl>247	AUE_NULL	ALL	{ int nfsclnt(int flag, caddr_t argp); } 
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>247	AUE_NULL	ALL	{ int nosys(void); } 
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if NFSSERVER	/* XXX */
+</span></span><span class=line><span class=cl>248	AUE_FHOPEN	ALL	{ int fhopen(const struct fhandle *u_fhp, int flags); } 
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>248	AUE_NULL	ALL	{ int nosys(void); } 
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>249	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>250	AUE_MINHERIT	ALL	{ int minherit(void *addr, size_t len, int inherit); }
+</span></span><span class=line><span class=cl>#if SYSV_SEM
+</span></span><span class=line><span class=cl>251	AUE_SEMSYS	ALL	{ int semsys(u_int which, int a2, int a3, int a4, int a5) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>251	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SYSV_MSG
+</span></span><span class=line><span class=cl>252	AUE_MSGSYS	ALL	{ int msgsys(u_int which, int a2, int a3, int a4, int a5) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>252	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SYSV_SHM
+</span></span><span class=line><span class=cl>253	AUE_SHMSYS	ALL	{ int shmsys(u_int which, int a2, int a3, int a4) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>253	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SYSV_SEM
+</span></span><span class=line><span class=cl>254	AUE_SEMCTL	ALL	{ int semctl(int semid, int semnum, int cmd, semun_t arg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>255	AUE_SEMGET	ALL	{ int semget(key_t key, int	nsems, int semflg); }
+</span></span><span class=line><span class=cl>256	AUE_SEMOP	ALL	{ int semop(int semid, struct sembuf *sops, int nsops); }
+</span></span><span class=line><span class=cl>257	AUE_NULL	ALL	{ int nosys(void); }	{ old semconfig }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>254	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>255	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>256	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>257	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SYSV_MSG
+</span></span><span class=line><span class=cl>258	AUE_MSGCTL	ALL	{ int msgctl(int msqid, int cmd, struct	msqid_ds *buf) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>259	AUE_MSGGET	ALL	{ int msgget(key_t key, int msgflg); }
+</span></span><span class=line><span class=cl>260	AUE_MSGSND	ALL	{ int msgsnd(int msqid, void *msgp, size_t msgsz, int msgflg); }
+</span></span><span class=line><span class=cl>261	AUE_MSGRCV	ALL	{ user_ssize_t msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, int msgflg); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>258	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>259	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>260	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>261	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SYSV_SHM
+</span></span><span class=line><span class=cl>262	AUE_SHMAT	ALL	{ user_addr_t shmat(int shmid, void *shmaddr, int shmflg); }
+</span></span><span class=line><span class=cl>263	AUE_SHMCTL	ALL	{ int shmctl(int shmid, int cmd, struct shmid_ds *buf) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>264	AUE_SHMDT	ALL	{ int shmdt(void *shmaddr); }
+</span></span><span class=line><span class=cl>265	AUE_SHMGET	ALL	{ int shmget(key_t key, size_t size, int shmflg); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>262	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>263	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>264	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>265	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>266	AUE_SHMOPEN	ALL	{ int shm_open(const char *name, int oflag, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>267	AUE_SHMUNLINK	ALL	{ int shm_unlink(const char *name); }
+</span></span><span class=line><span class=cl>268	AUE_SEMOPEN	ALL	{ user_addr_t sem_open(const char *name, int oflag, int mode, int value) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>269	AUE_SEMCLOSE	ALL	{ int sem_close(sem_t *sem); }
+</span></span><span class=line><span class=cl>270	AUE_SEMUNLINK	ALL	{ int sem_unlink(const char *name); }
+</span></span><span class=line><span class=cl>271	AUE_SEMWAIT	ALL	{ int sem_wait(sem_t *sem); }
+</span></span><span class=line><span class=cl>272	AUE_SEMTRYWAIT	ALL	{ int sem_trywait(sem_t *sem); }
+</span></span><span class=line><span class=cl>273	AUE_SEMPOST	ALL	{ int sem_post(sem_t *sem); }
+</span></span><span class=line><span class=cl>274	AUE_SYSCTL	ALL 	{ int sys_sysctlbyname(const char *name, size_t namelen, void *old, size_t *oldlenp, void *new, size_t newlen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>275	AUE_NULL	ALL	{ int enosys(void); } { old sem_init }
+</span></span><span class=line><span class=cl>276	AUE_NULL	ALL	{ int enosys(void); } { old sem_destroy }
+</span></span><span class=line><span class=cl>277	AUE_OPEN_EXTENDED_RWTC	ALL	{ int open_extended(user_addr_t path, int flags, uid_t uid, gid_t gid, int mode, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>278	AUE_UMASK_EXTENDED	ALL	{ int umask_extended(int newmask, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>279	AUE_STAT_EXTENDED	ALL	{ int stat_extended(user_addr_t path, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>280	AUE_LSTAT_EXTENDED	ALL	{ int lstat_extended(user_addr_t path, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>281	AUE_FSTAT_EXTENDED	ALL	{ int sys_fstat_extended(int fd, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>282	AUE_CHMOD_EXTENDED	ALL	{ int chmod_extended(user_addr_t path, uid_t uid, gid_t gid, int mode, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>283	AUE_FCHMOD_EXTENDED	ALL	{ int fchmod_extended(int fd, uid_t uid, gid_t gid, int mode, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>284	AUE_ACCESS_EXTENDED	ALL	{ int access_extended(user_addr_t entries, size_t size, user_addr_t results, uid_t uid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>285	AUE_SETTID	ALL	{ int settid(uid_t uid, gid_t gid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>286	AUE_GETTID	ALL	{ int gettid(uid_t *uidp, gid_t *gidp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>287	AUE_SETSGROUPS	ALL	{ int setsgroups(int setlen, user_addr_t guidset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>288	AUE_GETSGROUPS	ALL	{ int getsgroups(user_addr_t setlen, user_addr_t guidset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>289	AUE_SETWGROUPS	ALL	{ int setwgroups(int setlen, user_addr_t guidset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>290	AUE_GETWGROUPS	ALL	{ int getwgroups(user_addr_t setlen, user_addr_t guidset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>291	AUE_MKFIFO_EXTENDED	ALL	{ int mkfifo_extended(user_addr_t path, uid_t uid, gid_t gid, int mode, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>292	AUE_MKDIR_EXTENDED	ALL	{ int mkdir_extended(user_addr_t path, uid_t uid, gid_t gid, int mode, user_addr_t xsecurity) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_EXT_RESOLVER
+</span></span><span class=line><span class=cl>293	AUE_IDENTITYSVC	ALL	{ int identitysvc(int opcode, user_addr_t message) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>293	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>294	AUE_NULL	ALL	{ int shared_region_check_np(uint64_t *start_address) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>295	AUE_NULL	ALL	{ int nosys(void); } { old shared_region_map_np }
+</span></span><span class=line><span class=cl>296	AUE_NULL	ALL	{ int vm_pressure_monitor(int wait_for_pressure, int nsecs_monitored, uint32_t *pages_reclaimed); }
+</span></span><span class=line><span class=cl>#if PSYNCH
+</span></span><span class=line><span class=cl>297	AUE_NULL	ALL	{ uint32_t psynch_rw_longrdlock(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>298	AUE_NULL	ALL	{ uint32_t psynch_rw_yieldwrlock(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>299	AUE_NULL	ALL	{ int psynch_rw_downgrade(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>300	AUE_NULL	ALL	{ uint32_t psynch_rw_upgrade(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>301	AUE_NULL	ALL	{ uint32_t psynch_mutexwait(user_addr_t mutex,  uint32_t mgen, uint32_t  ugen, uint64_t tid, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>302	AUE_NULL	ALL	{ uint32_t psynch_mutexdrop(user_addr_t mutex,  uint32_t mgen, uint32_t  ugen, uint64_t tid, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>303	AUE_NULL	ALL	{ uint32_t psynch_cvbroad(user_addr_t cv, uint64_t cvlsgen, uint64_t cvudgen, uint32_t flags, user_addr_t mutex,  uint64_t mugen, uint64_t tid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>304	AUE_NULL	ALL	{ uint32_t psynch_cvsignal(user_addr_t cv, uint64_t cvlsgen, uint32_t cvugen, int thread_port, user_addr_t mutex,  uint64_t mugen, uint64_t tid, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>305	AUE_NULL	ALL	{ uint32_t psynch_cvwait(user_addr_t cv, uint64_t cvlsgen, uint32_t cvugen, user_addr_t mutex,  uint64_t mugen, uint32_t flags, int64_t sec, uint32_t nsec) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>306	AUE_NULL	ALL	{ uint32_t psynch_rw_rdlock(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>307	AUE_NULL	ALL	{ uint32_t psynch_rw_wrlock(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>308	AUE_NULL	ALL	{ uint32_t psynch_rw_unlock(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>309	AUE_NULL	ALL	{ uint32_t psynch_rw_unlock2(user_addr_t rwlock, uint32_t lgenval, uint32_t ugenval, uint32_t rw_wc, int flags)  NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>297	AUE_NULL	ALL	{ int nosys(void); } { old reset_shared_file }
+</span></span><span class=line><span class=cl>298	AUE_NULL	ALL	{ int nosys(void); } { old new_system_shared_regions }
+</span></span><span class=line><span class=cl>299	AUE_NULL	ALL	{ int enosys(void); } { old shared_region_map_file_np }
+</span></span><span class=line><span class=cl>300	AUE_NULL	ALL	{ int enosys(void); } { old shared_region_make_private_np }
+</span></span><span class=line><span class=cl>301	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>302	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>303	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>304	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>305	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>306	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>307	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>308	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>309	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>310	AUE_GETSID	ALL	{ int getsid(pid_t pid); }
+</span></span><span class=line><span class=cl>311	AUE_SETTIDWITHPID	ALL	{ int settid_with_pid(pid_t pid, int assume) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if PSYNCH
+</span></span><span class=line><span class=cl>312	AUE_NULL	ALL	{ int psynch_cvclrprepost(user_addr_t cv, uint32_t cvgen, uint32_t cvugen, uint32_t cvsgen, uint32_t prepocnt, uint32_t preposeq, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>312	AUE_NULL	ALL	{ int nosys(void); } { old __pthread_cond_timedwait }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>313	AUE_NULL	ALL	{ int aio_fsync(int op, user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>314 	AUE_NULL	ALL	{ user_ssize_t aio_return(user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>315	AUE_NULL	ALL	{ int aio_suspend(user_addr_t aiocblist, int nent, user_addr_t timeoutp); }
+</span></span><span class=line><span class=cl>316	AUE_NULL	ALL	{ int aio_cancel(int fd, user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>317	AUE_NULL	ALL	{ int aio_error(user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>318	AUE_NULL	ALL	{ int aio_read(user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>319	AUE_NULL	ALL	{ int aio_write(user_addr_t aiocbp); }
+</span></span><span class=line><span class=cl>320	AUE_LIOLISTIO	ALL	{ int lio_listio(int mode, user_addr_t aiocblist, int nent, user_addr_t sigp); }
+</span></span><span class=line><span class=cl>321	AUE_NULL	ALL	{ int nosys(void); } { old __pthread_cond_wait }
+</span></span><span class=line><span class=cl>322	AUE_IOPOLICYSYS	ALL	{ int iopolicysys(int cmd, void *arg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>323	AUE_NULL	ALL	{ int process_policy(int scope, int action, int policy, int policy_subtype, user_addr_t attrp, pid_t target_pid, uint64_t target_threadid) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>324	AUE_MLOCKALL	ALL	{ int mlockall(int how); }
+</span></span><span class=line><span class=cl>325	AUE_MUNLOCKALL	ALL	{ int munlockall(int how); }
+</span></span><span class=line><span class=cl>326	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>327	AUE_ISSETUGID	ALL	{ int issetugid(void); }
+</span></span><span class=line><span class=cl>328	AUE_PTHREADKILL	ALL	{ int __pthread_kill(int thread_port, int sig); }
+</span></span><span class=line><span class=cl>329	AUE_PTHREADSIGMASK	ALL	{ int __pthread_sigmask(int how, user_addr_t set, user_addr_t oset); }
+</span></span><span class=line><span class=cl>330	AUE_SIGWAIT	ALL	{ int __sigwait(user_addr_t set, user_addr_t sig); }
+</span></span><span class=line><span class=cl>331	AUE_NULL	ALL	{ int __disable_threadsignal(int value); }
+</span></span><span class=line><span class=cl>332	AUE_NULL	ALL	{ int __pthread_markcancel(int thread_port); }
+</span></span><span class=line><span class=cl>333	AUE_NULL	ALL	{ int __pthread_canceled(int  action); }
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>;#if OLD_SEMWAIT_SIGNAL
+</span></span><span class=line><span class=cl>;334	AUE_NULL	ALL	{ int nosys(void); }   { old __semwait_signal }
+</span></span><span class=line><span class=cl>;#else
+</span></span><span class=line><span class=cl>334     AUE_SEMWAITSIGNAL       ALL     { int __semwait_signal(int cond_sem, int mutex_sem, int timeout, int relative, int64_t tv_sec, int32_t tv_nsec); }
+</span></span><span class=line><span class=cl>;#endif
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>335	AUE_NULL	ALL	{ int nosys(void); }   { old utrace }
+</span></span><span class=line><span class=cl>336	AUE_PROCINFO	ALL	{ int proc_info(int32_t callnum,int32_t pid,uint32_t flavor, uint64_t arg,user_addr_t buffer,int32_t buffersize) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SENDFILE
+</span></span><span class=line><span class=cl>337	AUE_SENDFILE	ALL	{ int sendfile(int fd, int s, off_t offset, off_t *nbytes, struct sf_hdtr *hdtr, int flags); }
+</span></span><span class=line><span class=cl>#else /* !SENDFILE */
+</span></span><span class=line><span class=cl>337	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SENDFILE */
+</span></span><span class=line><span class=cl>338	AUE_STAT64	ALL	{ int stat64(user_addr_t path, user_addr_t ub); }
+</span></span><span class=line><span class=cl>339	AUE_FSTAT64	ALL	{ int sys_fstat64(int fd, user_addr_t ub); }
+</span></span><span class=line><span class=cl>340	AUE_LSTAT64	ALL	{ int lstat64(user_addr_t path, user_addr_t ub); }
+</span></span><span class=line><span class=cl>341	AUE_STAT64_EXTENDED	ALL	{ int stat64_extended(user_addr_t path, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>342	AUE_LSTAT64_EXTENDED	ALL	{ int lstat64_extended(user_addr_t path, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>343	AUE_FSTAT64_EXTENDED	ALL	{ int sys_fstat64_extended(int fd, user_addr_t ub, user_addr_t xsecurity, user_addr_t xsecurity_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>344	AUE_GETDIRENTRIES64	ALL	{ user_ssize_t getdirentries64(int fd, void *buf, user_size_t bufsize, off_t *position) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>345	AUE_STATFS64	ALL	{ int statfs64(char *path, struct statfs64 *buf); }
+</span></span><span class=line><span class=cl>346	AUE_FSTATFS64	ALL	{ int fstatfs64(int fd, struct statfs64 *buf); }
+</span></span><span class=line><span class=cl>347	AUE_GETFSSTAT64	ALL	{ int getfsstat64(user_addr_t buf, int bufsize, int flags); }
+</span></span><span class=line><span class=cl>348	AUE_NULL	ALL	{ int __pthread_chdir(user_addr_t path); }
+</span></span><span class=line><span class=cl>349	AUE_NULL	ALL	{ int __pthread_fchdir(int fd); }
+</span></span><span class=line><span class=cl>350	AUE_AUDIT	ALL	{ int audit(void *record, int length); }
+</span></span><span class=line><span class=cl>351	AUE_AUDITON	ALL	{ int auditon(int cmd, void *data, int length); }
+</span></span><span class=line><span class=cl>352	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>353	AUE_GETAUID	ALL	{ int getauid(au_id_t *auid); }
+</span></span><span class=line><span class=cl>354	AUE_SETAUID	ALL	{ int setauid(au_id_t *auid); }
+</span></span><span class=line><span class=cl>355	AUE_NULL	ALL	{ int nosys(void); }	{ old getaudit }
+</span></span><span class=line><span class=cl>356	AUE_NULL	ALL	{ int nosys(void); }	{ old setaudit }
+</span></span><span class=line><span class=cl>357	AUE_GETAUDIT_ADDR	ALL	{ int getaudit_addr(struct auditinfo_addr *auditinfo_addr, int length); }
+</span></span><span class=line><span class=cl>358	AUE_SETAUDIT_ADDR	ALL	{ int setaudit_addr(struct auditinfo_addr *auditinfo_addr, int length); }
+</span></span><span class=line><span class=cl>359	AUE_AUDITCTL	ALL	{ int auditctl(char *path); }
+</span></span><span class=line><span class=cl>#if CONFIG_WORKQUEUE
+</span></span><span class=line><span class=cl>360	AUE_NULL	ALL	{ user_addr_t bsdthread_create(user_addr_t func, user_addr_t func_arg, user_addr_t stack, user_addr_t pthread, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>361	AUE_NULL	ALL	{ int bsdthread_terminate(user_addr_t stackaddr, size_t freesize, uint32_t port, uint32_t sem) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>360	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>361	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* CONFIG_WORKQUEUE */
+</span></span><span class=line><span class=cl>362	AUE_KQUEUE	ALL	{ int kqueue(void); }
+</span></span><span class=line><span class=cl>363	AUE_NULL	ALL	{ int kevent(int fd, const struct kevent *changelist, int nchanges, struct kevent *eventlist, int nevents, const struct timespec *timeout); }
+</span></span><span class=line><span class=cl>364	AUE_LCHOWN	ALL	{ int lchown(user_addr_t path, uid_t owner, gid_t group) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>365	AUE_NULL	ALL	{ int nosys(void); }	{ old stack_snapshot }
+</span></span><span class=line><span class=cl>#if CONFIG_WORKQUEUE
+</span></span><span class=line><span class=cl>366	AUE_NULL	ALL	{ int bsdthread_register(user_addr_t threadstart, user_addr_t wqthread, uint32_t flags, user_addr_t stack_addr_hint, user_addr_t targetconc_ptr, uint32_t dispatchqueue_offset, uint32_t tsd_offset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>367	AUE_WORKQOPEN	ALL	{ int workq_open(void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>368	AUE_WORKQOPS	ALL	{ int workq_kernreturn(int options, user_addr_t item, int affinity, int prio) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>366	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>367	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>368	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* CONFIG_WORKQUEUE */
+</span></span><span class=line><span class=cl>369	AUE_NULL	ALL	{ int kevent64(int fd, const struct kevent64_s *changelist, int nchanges, struct kevent64_s *eventlist, int nevents, unsigned int flags, const struct timespec *timeout); }
+</span></span><span class=line><span class=cl>#if OLD_SEMWAIT_SIGNAL
+</span></span><span class=line><span class=cl>370     AUE_SEMWAITSIGNAL       ALL     { int __old_semwait_signal(int cond_sem, int mutex_sem, int timeout, int relative, const struct timespec *ts); }
+</span></span><span class=line><span class=cl>371     AUE_SEMWAITSIGNAL       ALL     { int __old_semwait_signal_nocancel(int cond_sem, int mutex_sem, int timeout, int relative, const struct timespec *ts) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>370     AUE_NULL        ALL     { int nosys(void); }   { old __semwait_signal }
+</span></span><span class=line><span class=cl>371     AUE_NULL        ALL     { int nosys(void); }   { old __semwait_signal }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>372	AUE_NULL	ALL	{ uint64_t thread_selfid (void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>373	AUE_LEDGER	ALL	{ int ledger(int cmd, caddr_t arg1, caddr_t arg2, caddr_t arg3); }
+</span></span><span class=line><span class=cl>374	AUE_NULL	ALL	{ int kevent_qos(int fd, const struct kevent_qos_s *changelist, int nchanges, struct kevent_qos_s *eventlist, int nevents, void *data_out, size_t *data_available, unsigned int flags); }
+</span></span><span class=line><span class=cl>375	AUE_NULL	ALL	{ int kevent_id(uint64_t id, const struct kevent_qos_s *changelist, int nchanges, struct kevent_qos_s *eventlist, int nevents, void *data_out, size_t *data_available, unsigned int flags); }
+</span></span><span class=line><span class=cl>376	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>377	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>378	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>379	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>380	AUE_MAC_EXECVE	ALL	{ int __mac_execve(char *fname, char **argp, char **envp, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>#if CONFIG_MACF
+</span></span><span class=line><span class=cl>381	AUE_MAC_SYSCALL	ALL	{ int __mac_syscall(char *policy, int call, user_addr_t arg); }
+</span></span><span class=line><span class=cl>382	AUE_MAC_GET_FILE	ALL	{ int __mac_get_file(char *path_p, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>383	AUE_MAC_SET_FILE	ALL	{ int __mac_set_file(char *path_p, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>384	AUE_MAC_GET_LINK	ALL	{ int __mac_get_link(char *path_p, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>385	AUE_MAC_SET_LINK	ALL	{ int __mac_set_link(char *path_p, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>386	AUE_MAC_GET_PROC	ALL	{ int __mac_get_proc(struct mac *mac_p); }
+</span></span><span class=line><span class=cl>387	AUE_MAC_SET_PROC	ALL	{ int __mac_set_proc(struct mac *mac_p); }
+</span></span><span class=line><span class=cl>388	AUE_MAC_GET_FD	ALL	{ int __mac_get_fd(int fd, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>389	AUE_MAC_SET_FD	ALL	{ int __mac_set_fd(int fd, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>390	AUE_MAC_GET_PID	ALL	{ int __mac_get_pid(pid_t pid, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>381     AUE_MAC_SYSCALL ALL     { int enosys(void); }
+</span></span><span class=line><span class=cl>382     AUE_MAC_GET_FILE        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>383     AUE_MAC_SET_FILE        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>384     AUE_MAC_GET_LINK        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>385     AUE_MAC_SET_LINK        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>386     AUE_MAC_GET_PROC        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>387     AUE_MAC_SET_PROC        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>388     AUE_MAC_GET_FD  ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>389     AUE_MAC_SET_FD  ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>390     AUE_MAC_GET_PID ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>391	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>392	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>393	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>394	AUE_SELECT	ALL	{ int pselect(int nd, u_int32_t *in, u_int32_t *ou, u_int32_t *ex, const struct timespec *ts, const struct sigset_t *mask) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>395	AUE_SELECT	ALL	{ int pselect_nocancel(int nd, u_int32_t *in, u_int32_t *ou, u_int32_t *ex, const struct timespec *ts, const struct sigset_t *mask) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>396	AUE_NULL	ALL	{ user_ssize_t read_nocancel(int fd, user_addr_t cbuf, user_size_t nbyte) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>397	AUE_NULL	ALL	{ user_ssize_t write_nocancel(int fd, user_addr_t cbuf, user_size_t nbyte) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>398	AUE_OPEN_RWTC	ALL	{ int open_nocancel(user_addr_t path, int flags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>399	AUE_CLOSE	ALL	{ int sys_close_nocancel(int fd) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>400	AUE_WAIT4	ALL	{ int wait4_nocancel(int pid, user_addr_t status, int options, user_addr_t rusage) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>401	AUE_RECVMSG	ALL	{ int recvmsg_nocancel(int s, struct msghdr *msg, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>402	AUE_SENDMSG	ALL	{ int sendmsg_nocancel(int s, caddr_t msg, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>403	AUE_RECVFROM	ALL	{ int recvfrom_nocancel(int s, void *buf, size_t len, int flags, struct sockaddr *from, int *fromlenaddr) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>404	AUE_ACCEPT	ALL	{ int accept_nocancel(int s, caddr_t name, socklen_t	*anamelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>401	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>402	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>403	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>404	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>405	AUE_MSYNC	ALL	{ int msync_nocancel(caddr_t addr, size_t len, int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>406	AUE_FCNTL	ALL	{ int sys_fcntl_nocancel(int fd, int cmd, long arg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>407	AUE_SELECT	ALL	{ int select_nocancel(int nd, u_int32_t *in, u_int32_t *ou, u_int32_t *ex, struct timeval *tv) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>408	AUE_FSYNC	ALL	{ int fsync_nocancel(int fd) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>409	AUE_CONNECT	ALL	{ int connect_nocancel(int s, caddr_t name, socklen_t namelen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>409	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>410	AUE_NULL	ALL	{ int sigsuspend_nocancel(sigset_t mask) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>411	AUE_READV	ALL	{ user_ssize_t readv_nocancel(int fd, struct iovec *iovp, u_int iovcnt) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>412	AUE_WRITEV	ALL	{ user_ssize_t writev_nocancel(int fd, struct iovec *iovp, u_int iovcnt) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>413	AUE_SENDTO	ALL	{ int sendto_nocancel(int s, caddr_t buf, size_t len, int flags, caddr_t to, socklen_t tolen) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>413	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>414	AUE_PREAD	ALL	{ user_ssize_t pread_nocancel(int fd, user_addr_t buf, user_size_t nbyte, off_t offset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>415	AUE_PWRITE	ALL	{ user_ssize_t pwrite_nocancel(int fd, user_addr_t buf, user_size_t nbyte, off_t offset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>416	AUE_WAITID	ALL	{ int waitid_nocancel(idtype_t idtype, id_t id, siginfo_t *infop, int options) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>417	AUE_POLL	ALL	{ int poll_nocancel(struct pollfd *fds, u_int nfds, int timeout) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SYSV_MSG
+</span></span><span class=line><span class=cl>418	AUE_MSGSND	ALL	{ int msgsnd_nocancel(int msqid, void *msgp, size_t msgsz, int msgflg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>419	AUE_MSGRCV	ALL	{ user_ssize_t msgrcv_nocancel(int msqid, void *msgp, size_t msgsz, long msgtyp, int msgflg) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>418	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>419	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>420	AUE_SEMWAIT	ALL	{ int sem_wait_nocancel(sem_t *sem) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>421	AUE_NULL	ALL	{ int aio_suspend_nocancel(user_addr_t aiocblist, int nent, user_addr_t timeoutp) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>422	AUE_SIGWAIT	ALL	{ int __sigwait_nocancel(user_addr_t set, user_addr_t sig) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>;#if OLD_SEMWAIT_SIGNAL
+</span></span><span class=line><span class=cl>;423	AUE_NULL	ALL	{ int nosys(void); }   { old __semwait_signal_nocancel }
+</span></span><span class=line><span class=cl>;#else
+</span></span><span class=line><span class=cl>423     AUE_SEMWAITSIGNAL       ALL     { int __semwait_signal_nocancel(int cond_sem, int mutex_sem, int timeout, int relative, int64_t tv_sec, int32_t tv_nsec); }
+</span></span><span class=line><span class=cl>;#endif
+</span></span><span class=line><span class=cl>424	AUE_MAC_MOUNT	ALL	{ int __mac_mount(char *type, char *path, int flags, caddr_t data, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>#if CONFIG_MACF
+</span></span><span class=line><span class=cl>425	AUE_MAC_GET_MOUNT	ALL	{ int __mac_get_mount(char *path, struct mac *mac_p); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>425     AUE_MAC_GET_MOUNT       ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>426	AUE_MAC_GETFSSTAT	ALL	{ int __mac_getfsstat(user_addr_t buf, int bufsize, user_addr_t mac, int macsize, int flags); }
+</span></span><span class=line><span class=cl>427	AUE_FSGETPATH	ALL	{ user_ssize_t fsgetpath(user_addr_t buf, size_t bufsize, user_addr_t fsid, uint64_t objid); } { private fsgetpath (File Manager SPI) }
+</span></span><span class=line><span class=cl>428	AUE_NULL	ALL	{ mach_port_name_t audit_session_self(void); }
+</span></span><span class=line><span class=cl>429	AUE_NULL	ALL	{ int audit_session_join(mach_port_name_t port); }
+</span></span><span class=line><span class=cl>430	AUE_NULL	ALL	{ int sys_fileport_makeport(int fd, user_addr_t portnamep); }
+</span></span><span class=line><span class=cl>431	AUE_NULL	ALL	{ int sys_fileport_makefd(mach_port_name_t port); }
+</span></span><span class=line><span class=cl>432	AUE_NULL	ALL	{ int audit_session_port(au_asid_t asid, user_addr_t portnamep); }
+</span></span><span class=line><span class=cl>433	AUE_NULL	ALL	{ int pid_suspend(int pid); }
+</span></span><span class=line><span class=cl>434	AUE_NULL	ALL	{ int pid_resume(int pid); }
+</span></span><span class=line><span class=cl>#if CONFIG_EMBEDDED
+</span></span><span class=line><span class=cl>435	AUE_NULL	ALL	{ int pid_hibernate(int pid); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>435     AUE_NULL        ALL     { int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>436	AUE_NULL	ALL	{ int pid_shutdown_sockets(int pid, int level); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>436	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>437	AUE_NULL	ALL	{ int nosys(void); } { old shared_region_slide_np }
+</span></span><span class=line><span class=cl>438	AUE_NULL	ALL	{ int shared_region_map_and_slide_np(int fd, uint32_t count, const struct shared_file_mapping_np *mappings, uint32_t slide, uint64_t* slide_start, uint32_t slide_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>439	AUE_NULL	ALL	{ int kas_info(int selector, void *value, size_t *size); }
+</span></span><span class=line><span class=cl>#if CONFIG_MEMORYSTATUS
+</span></span><span class=line><span class=cl>440	AUE_NULL	ALL	{ int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, user_addr_t buffer, size_t buffersize); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>440	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>441	AUE_OPEN_RWTC	ALL	{ int guarded_open_np(user_addr_t path, const guardid_t *guard, u_int guardflags, int flags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>442	AUE_CLOSE	ALL	{ int guarded_close_np(int fd, const guardid_t *guard); }
+</span></span><span class=line><span class=cl>443	AUE_KQUEUE	ALL	{ int guarded_kqueue_np(const guardid_t *guard, u_int guardflags); }
+</span></span><span class=line><span class=cl>444	AUE_NULL	ALL	{ int change_fdguard_np(int fd, const guardid_t *guard, u_int guardflags, const guardid_t *nguard, u_int nguardflags, int *fdflagsp); }
+</span></span><span class=line><span class=cl>445	AUE_USRCTL	ALL	{ int usrctl(uint32_t flags); }
+</span></span><span class=line><span class=cl>446	AUE_NULL	ALL	{ int proc_rlimit_control(pid_t pid, int flavor, void *arg); }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>447	AUE_CONNECT	ALL	{ int connectx(int socket, const sa_endpoints_t *endpoints, sae_associd_t associd, unsigned int flags, const struct iovec *iov, unsigned int iovcnt, size_t *len, sae_connid_t *connid); }
+</span></span><span class=line><span class=cl>448	AUE_NULL	ALL	{ int disconnectx(int s, sae_associd_t aid, sae_connid_t cid); }
+</span></span><span class=line><span class=cl>449	AUE_NULL	ALL	{ int peeloff(int s, sae_associd_t aid); }
+</span></span><span class=line><span class=cl>450	AUE_SOCKET	ALL	{ int socket_delegate(int domain, int type, int protocol, pid_t epid); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>447	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>448	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>449	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>450	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>451	AUE_NULL	ALL	{ int telemetry(uint64_t cmd, uint64_t deadline, uint64_t interval, uint64_t leeway, uint64_t arg4, uint64_t arg5) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_PROC_UUID_POLICY
+</span></span><span class=line><span class=cl>452	AUE_NULL	ALL	{ int proc_uuid_policy(uint32_t operation, uuid_t uuid, size_t uuidlen, uint32_t flags); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>452	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if CONFIG_MEMORYSTATUS
+</span></span><span class=line><span class=cl>453	AUE_NULL	ALL	{ int memorystatus_get_level(user_addr_t level); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>453	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>454	AUE_NULL	ALL	{ int system_override(uint64_t timeout, uint64_t flags); }
+</span></span><span class=line><span class=cl>455	AUE_NULL	ALL	{ int vfs_purge(void); }
+</span></span><span class=line><span class=cl>456	AUE_NULL	ALL	{ int sfi_ctl(uint32_t operation, uint32_t sfi_class, uint64_t time, uint64_t *out_time) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>457	AUE_NULL	ALL	{ int sfi_pidctl(uint32_t operation, pid_t pid, uint32_t sfi_flags, uint32_t *out_sfi_flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_COALITIONS
+</span></span><span class=line><span class=cl>458	AUE_NULL	ALL	{ int coalition(uint32_t operation, uint64_t *cid, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>459	AUE_NULL	ALL	{ int coalition_info(uint32_t flavor, uint64_t *cid, void *buffer, size_t *bufsize) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>458	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>459	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif /* COALITIONS */
+</span></span><span class=line><span class=cl>#if NECP
+</span></span><span class=line><span class=cl>460 AUE_NECP	ALL { int necp_match_policy(uint8_t *parameters, size_t parameters_size, struct necp_aggregate_result *returned_result); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>460	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* NECP */
+</span></span><span class=line><span class=cl>461	AUE_GETATTRLISTBULK	ALL	{ int getattrlistbulk(int dirfd, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, uint64_t options); }
+</span></span><span class=line><span class=cl>462	AUE_CLONEFILEAT	ALL     { int clonefileat(int src_dirfd, user_addr_t src, int dst_dirfd, user_addr_t dst, uint32_t flags); }
+</span></span><span class=line><span class=cl>463	AUE_OPENAT_RWTC	ALL	{ int openat(int fd, user_addr_t path, int flags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>464	AUE_OPENAT_RWTC	ALL	{ int openat_nocancel(int fd, user_addr_t path, int flags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>465	AUE_RENAMEAT	ALL	{ int renameat(int fromfd, char *from, int tofd, char *to) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>466	AUE_FACCESSAT	ALL	{ int faccessat(int fd, user_addr_t path, int amode, int flag); }
+</span></span><span class=line><span class=cl>467	AUE_FCHMODAT	ALL	{ int fchmodat(int fd, user_addr_t path, int mode, int flag); }
+</span></span><span class=line><span class=cl>468	AUE_FCHOWNAT	ALL	{ int fchownat(int fd, user_addr_t path, uid_t uid,gid_t gid, int flag); }
+</span></span><span class=line><span class=cl>469	AUE_FSTATAT	ALL	{ int fstatat(int fd, user_addr_t path, user_addr_t ub, int flag); }
+</span></span><span class=line><span class=cl>470	AUE_FSTATAT	ALL	{ int fstatat64(int fd, user_addr_t path, user_addr_t ub, int flag); }
+</span></span><span class=line><span class=cl>471	AUE_LINKAT	ALL	{ int linkat(int fd1, user_addr_t path, int fd2, user_addr_t link, int flag); }
+</span></span><span class=line><span class=cl>472	AUE_UNLINKAT	ALL	{ int unlinkat(int fd, user_addr_t path, int flag) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>473	AUE_READLINKAT	ALL	{ int readlinkat(int fd, user_addr_t path, user_addr_t buf, size_t bufsize); }
+</span></span><span class=line><span class=cl>474	AUE_SYMLINKAT	ALL	{ int symlinkat(user_addr_t *path1, int fd, user_addr_t path2); }
+</span></span><span class=line><span class=cl>475	AUE_MKDIRAT	ALL	{ int mkdirat(int fd, user_addr_t path, int mode); }
+</span></span><span class=line><span class=cl>476	AUE_GETATTRLISTAT	ALL	{ int getattrlistat(int fd, const char *path, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, u_long options); }
+</span></span><span class=line><span class=cl>477	AUE_NULL	ALL	{ int proc_trace_log(pid_t pid, uint64_t uniqueid); }
+</span></span><span class=line><span class=cl>478	AUE_NULL	ALL	{ int bsdthread_ctl(user_addr_t cmd, user_addr_t arg1, user_addr_t arg2, user_addr_t arg3) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>479	AUE_OPENBYID_RWT	ALL	{ int openbyid_np(user_addr_t fsid, user_addr_t objid, int oflags); }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>480	AUE_NULL	ALL	{ user_ssize_t recvmsg_x(int s, struct msghdr_x *msgp, u_int cnt, int flags); }
+</span></span><span class=line><span class=cl>481	AUE_NULL	ALL	{ user_ssize_t sendmsg_x(int s, struct msghdr_x *msgp, u_int cnt, int flags); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>480	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>481	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>482	AUE_NULL	ALL	{ uint64_t thread_selfusage(void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_CSR
+</span></span><span class=line><span class=cl>483	AUE_NULL	ALL	{ int csrctl(uint32_t op, user_addr_t useraddr, user_addr_t usersize) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>483	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif /* CSR */
+</span></span><span class=line><span class=cl>484	AUE_NULL	ALL	{ int guarded_open_dprotected_np(user_addr_t path, const guardid_t *guard, u_int guardflags, int flags, int dpclass, int dpflags, int mode) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>485	AUE_NULL	ALL	{ user_ssize_t guarded_write_np(int fd, const guardid_t *guard, user_addr_t cbuf, user_size_t nbyte); }
+</span></span><span class=line><span class=cl>486	AUE_PWRITE	ALL	{ user_ssize_t guarded_pwrite_np(int fd, const guardid_t *guard, user_addr_t buf, user_size_t nbyte, off_t offset); }
+</span></span><span class=line><span class=cl>487	AUE_WRITEV	ALL	{ user_ssize_t guarded_writev_np(int fd, const guardid_t *guard, struct iovec *iovp, int iovcnt); }
+</span></span><span class=line><span class=cl>488	AUE_RENAMEAT	ALL	{ int renameatx_np(int fromfd, char *from, int tofd, char *to, u_int flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_CODE_DECRYPTION
+</span></span><span class=line><span class=cl>489	AUE_MPROTECT	ALL	{ int mremap_encrypted(caddr_t addr, size_t len, uint32_t cryptid, uint32_t cputype, uint32_t cpusubtype); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>489	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if NETWORKING
+</span></span><span class=line><span class=cl>490	AUE_NETAGENT	ALL	{ int netagent_trigger(uuid_t agent_uuid, size_t agent_uuidlen); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>490	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* NETWORKING */
+</span></span><span class=line><span class=cl>491	AUE_STACKSNAPSHOT ALL	{ int stack_snapshot_with_config(int stackshot_config_version, user_addr_t stackshot_config, size_t stackshot_config_size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if CONFIG_TELEMETRY
+</span></span><span class=line><span class=cl>492	AUE_STACKSNAPSHOT ALL	{ int microstackshot(user_addr_t tracebuf, uint32_t tracebuf_size, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>492	AUE_NULL	ALL { int enosys(void); }
+</span></span><span class=line><span class=cl>#endif /* CONFIG_TELEMETRY */
+</span></span><span class=line><span class=cl>#if PGO
+</span></span><span class=line><span class=cl>493 	AUE_NULL	ALL	{ user_ssize_t grab_pgo_data (user_addr_t uuid, int flags, user_addr_t buffer, user_ssize_t size); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>493	AUE_NULL	ALL { int enosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>#if CONFIG_PERSONAS
+</span></span><span class=line><span class=cl>494	AUE_PERSONA	ALL	{ int persona(uint32_t operation, uint32_t flags, struct kpersona_info *info, uid_t *id, size_t *idlen, char *path) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>494	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif
+</span></span><span class=line><span class=cl>495	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>496	AUE_NULL	ALL	{ uint64_t mach_eventlink_signal(mach_port_name_t eventlink_port, uint64_t signal_count) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>497	AUE_NULL	ALL	{ uint64_t mach_eventlink_wait_until(mach_port_name_t eventlink_port, uint64_t wait_count, uint64_t deadline, uint32_t clock_id, uint32_t option) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>498	AUE_NULL	ALL	{ uint64_t mach_eventlink_signal_wait_until(mach_port_name_t eventlink_port, uint64_t wait_count, uint64_t signal_count, uint64_t deadline, uint32_t clock_id, uint32_t option) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>499	AUE_NULL	ALL	{ int work_interval_ctl(uint32_t operation, uint64_t work_interval_id, void *arg, size_t len) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>500	AUE_NULL	ALL	{ int getentropy(void *buffer, size_t size); }
+</span></span><span class=line><span class=cl>#if NECP
+</span></span><span class=line><span class=cl>501	AUE_NECP	ALL	{ int necp_open(int flags); } }
+</span></span><span class=line><span class=cl>502	AUE_NECP	ALL	{ int necp_client_action(int necp_fd, uint32_t action, uuid_t client_id, size_t client_id_len, uint8_t *buffer, size_t buffer_size); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>501	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>502	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif /* NECP */
+</span></span><span class=line><span class=cl>503	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>504	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>505	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>506	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>507	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>508	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>509	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>510	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>511	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>512	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>513	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>514	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>515	AUE_NULL	ALL	{ int ulock_wait(uint32_t operation, void *addr, uint64_t value, uint32_t timeout) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>516	AUE_NULL	ALL	{ int ulock_wake(uint32_t operation, void *addr, uint64_t wake_value) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>517	AUE_FCLONEFILEAT	ALL     { int fclonefileat(int src_fd, int dst_dirfd, user_addr_t dst, uint32_t flags); }
+</span></span><span class=line><span class=cl>518	AUE_NULL	ALL     { int fs_snapshot(uint32_t op, int dirfd, user_addr_t name1, user_addr_t name2, user_addr_t data, uint32_t flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>519	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>520	AUE_KILL	ALL	{ int terminate_with_payload(int pid, uint32_t reason_namespace, uint64_t reason_code, void *payload, uint32_t payload_size, const char *reason_string, uint64_t reason_flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>521	AUE_EXIT	ALL	{ void abort_with_payload(uint32_t reason_namespace, uint64_t reason_code, void *payload, uint32_t payload_size, const char *reason_string, uint64_t reason_flags) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if NECP
+</span></span><span class=line><span class=cl>522	AUE_NECP	ALL	{ int necp_session_open(int flags); } }
+</span></span><span class=line><span class=cl>523	AUE_NECP	ALL	{ int necp_session_action(int necp_fd, uint32_t action, uint8_t *in_buffer, size_t in_buffer_length, uint8_t *out_buffer, size_t out_buffer_length); }
+</span></span><span class=line><span class=cl>#else /* NECP */
+</span></span><span class=line><span class=cl>522	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>523	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif /* NECP */
+</span></span><span class=line><span class=cl>524	AUE_SETATTRLISTAT	ALL	{ int setattrlistat(int fd, const char *path, struct attrlist *alist, void *attributeBuffer, size_t bufferSize, uint32_t options); }
+</span></span><span class=line><span class=cl>525	AUE_NET		ALL	{ int net_qos_guideline(struct net_qos_param *param, uint32_t param_len); }
+</span></span><span class=line><span class=cl>526	AUE_FMOUNT	ALL	{ int fmount(const char *type, int fd, int flags, void *data); }
+</span></span><span class=line><span class=cl>527	AUE_NULL	ALL	{ int ntp_adjtime(struct timex *tp); }
+</span></span><span class=line><span class=cl>528	AUE_NULL	ALL	{ int ntp_gettime(struct ntptimeval *ntvp); }
+</span></span><span class=line><span class=cl>529	AUE_NULL	ALL	{ int os_fault_with_payload(uint32_t reason_namespace, uint64_t reason_code, void *payload, uint32_t payload_size, const char *reason_string, uint64_t reason_flags); }
+</span></span><span class=line><span class=cl>#if CONFIG_WORKQUEUE
+</span></span><span class=line><span class=cl>530	AUE_WORKLOOPCTL	ALL	{ int kqueue_workloop_ctl(user_addr_t cmd, uint64_t options, user_addr_t addr, size_t sz) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>530	AUE_NULL	ALL	{ int enosys(void); }
+</span></span><span class=line><span class=cl>#endif // CONFIG_WORKQUEUE
+</span></span><span class=line><span class=cl>531	AUE_NULL	ALL	{ uint64_t __mach_bridge_remote_time(uint64_t local_timestamp); }
+</span></span><span class=line><span class=cl>#if CONFIG_COALITIONS
+</span></span><span class=line><span class=cl>532 AUE_NULL  ALL { int coalition_ledger(uint32_t operation, uint64_t *cid, void *buffer, size_t *bufsize) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>532   AUE_NULL    ALL { int enosys(void); }
+</span></span><span class=line><span class=cl>#endif // CONFIG_COALITIONS
+</span></span><span class=line><span class=cl>533     AUE_NULL        ALL     { int log_data(unsigned int tag, unsigned int flags, void *buffer, unsigned int size) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>534 AUE_NULL	ALL	{ uint64_t memorystatus_available_memory(void) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>535 AUE_NULL	ALL { int enosys(void); }
+</span></span><span class=line><span class=cl>536	AUE_NULL	ALL	{ int shared_region_map_and_slide_2_np(uint32_t files_count, const struct shared_file_np *files, uint32_t mappings_count, const struct shared_file_mapping_slide_np *mappings) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>537	AUE_NULL	ALL { int pivot_root(const char *new_rootfs_path_before, const char *old_rootfs_path_after); }
+</span></span><span class=line><span class=cl>538 AUE_TASKINSPECTFORPID	ALL { int task_inspect_for_pid(mach_port_name_t target_tport, int pid, mach_port_name_t *t); }
+</span></span><span class=line><span class=cl>539 AUE_TASKREADFORPID	ALL { int task_read_for_pid(mach_port_name_t target_tport, int pid, mach_port_name_t *t); }
+</span></span><span class=line><span class=cl>540	AUE_PREADV	ALL	{ user_ssize_t sys_preadv(int fd, struct iovec *iovp, int iovcnt, off_t offset); }
+</span></span><span class=line><span class=cl>541	AUE_PWRITEV	ALL	{ user_ssize_t sys_pwritev(int fd, struct iovec *iovp, int iovcnt, off_t offset); }
+</span></span><span class=line><span class=cl>542	AUE_PREADV	ALL	{ user_ssize_t sys_preadv_nocancel(int fd, struct iovec *iovp, int iovcnt, off_t offset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>543	AUE_PWRITEV	ALL	{ user_ssize_t sys_pwritev_nocancel(int fd, struct iovec *iovp, int iovcnt, off_t offset) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>544     AUE_NULL        ALL     { int ulock_wait2(uint32_t operation, void *addr, uint64_t value, uint64_t timeout, uint64_t value2) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>545	AUE_PROCINFO	ALL	{ int proc_info_extended_id(int32_t callnum, int32_t pid, uint32_t flavor, uint32_t flags, uint64_t ext_id, uint64_t arg, user_addr_t buffer, int32_t buffersize) NO_SYSCALL_STUB; }
+</span></span><span class=line><span class=cl>#if SOCKETS
+</span></span><span class=line><span class=cl>546     AUE_TRACKERACTION       ALL     { int tracker_action(int action, char *buffer, size_t buffer_size); }
+</span></span><span class=line><span class=cl>#else
+</span></span><span class=line><span class=cl>546	AUE_NULL	ALL	{ int nosys(void); }
+</span></span><span class=line><span class=cl>#endif /* SOCKETS */
+</span></span><span class=line><span class=cl>547 AUE_DEBUG_SYSCALL_REJECT	ALL { int debug_syscall_reject(uint64_t packed_selectors) NO_SYSCALL_STUB; }
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 0001-01-01 00:00:00">更新于 0001-01-01&nbsp;</span></div><div class=post-info-license><span><a rel="license external nofollow noopener noreferrer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7/ data-title="iOS 系统调用号"><i class="fa-brands fa-twitter fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7/><i class="fa-brands fa-facebook-square fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=/ios-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%8F%B7/ data-title="iOS 系统调用号"><i class="fa-brands fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/ class=post-nav-item rel=next title="使用 LLDBTrace 还原算法">使用 LLDBTrace 还原算法<i class="fa-solid fa-angle-right fa-fw" aria-hidden=true></i></a></div></div><div id=comments><div id=gitalk class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://github.com/gitalk/gitalk rel="external nofollow noopener noreferrer">Gitalk</a>.</noscript></div></article></main><footer class=footer><div class=footer-container><div class="footer-line statistics"><span class=site-time title=网站运行中……><i class="fa-solid fa-heartbeat fa-fw animate-icon" aria-hidden=true></i><span class="ms-1 d-none">已经持续输出</span><span class="run-times ms-1">网站运行中……</span></span></div></div></footer></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class="variant-numeric d-none">0%</span></div><div class="fixed-button view-comments d-none" role=button aria-label=查看评论><i class="fa-solid fa-comment fa-fw" aria-hidden=true></i></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/lib/gitalk/gitalk.min.css><link rel=stylesheet href=/lib/katex/katex.min.css><script src=/lib/gitalk/gitalk.min.js></script><script src=/lib/sharer/sharer.min.js async defer></script><script src=/lib/katex/katex.min.js defer></script><script src=/lib/katex/auto-render.min.js defer></script><script src=/lib/katex/copy-tex.min.js defer></script><script src=/lib/katex/mhchem.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",editLockTitle:"锁定可编辑代码块",editUnLockTitle:"解锁可编辑代码块",editable:!0,maxShownLines:10},comment:{enable:!0,expired:!1,gitalk:{admin:["mdr668"],clientID:"04bf31663ad6d062490c",clientSecret:"bf91e6314f78b97dfbba4fac7572aa6229b4e817",id:"0001-01-01T00:00:00Z",owner:"mdr668",repo:"mdr668.github.io",title:"iOS 系统调用号"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},siteTime:"2022-12-18T16:15:22+08:00"}</script><script src=/js/theme.min.js defer></script></body></html>
