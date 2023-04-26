@@ -1,0 +1,239 @@
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>- mdr's Blog</title><meta name=author content="mdr"><meta name=author-link content="https://github.com/mdr668"><meta name=description content="zingfront 逆向笔记 确定参数来源 拼接组装待加密的参数: 1 2 3 4 5 6 7 2825b4500 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61 ..iPhone 13.7..a 2825b4510 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e fma-sdk-i-v7.69. 2825b4520 30 c8 01"><meta name=keywords content="Hugo,FixIt"><meta itemprop=name content><meta itemprop=description content="zingfront 逆向笔记 确定参数来源 拼接组装待加密的参数: 1 2 3 4 5 6 7 2825b4500 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61 ..iPhone 13.7..a 2825b4510 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e fma-sdk-i-v7.69. 2825b4520 30 c8 01"><meta itemprop=wordCount content="1876"><meta itemprop=keywords content><meta property="og:title" content><meta property="og:description" content="zingfront 逆向笔记 确定参数来源 拼接组装待加密的参数: 1 2 3 4 5 6 7 2825b4500 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61 ..iPhone 13.7..a 2825b4510 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e fma-sdk-i-v7.69. 2825b4520 30 c8 01"><meta property="og:type" content="article"><meta property="og:url" content="/zingfront-%E9%80%86%E5%90%91/"><meta property="article:section" content="posts"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="zingfront 逆向笔记 确定参数来源 拼接组装待加密的参数: 1 2 3 4 5 6 7 2825b4500 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61 ..iPhone 13.7..a 2825b4510 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e fma-sdk-i-v7.69. 2825b4520 30 c8 01"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=/zingfront-%E9%80%86%E5%90%91/><link rel=next href=/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/zingfront-%E9%80%86%E5%90%91\/"},"genre":"posts","wordcount":1876,"url":"\/zingfront-%E9%80%86%E5%90%91\/","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"mdr"},"description":""}</script></head><body data-header-desktop=normal data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=/fixit.min.svg srcset="/fixit.min.svg, /fixit.min.svg 1.5x, /fixit.min.svg 2x" sizes=auto data-title="mdr's Blog" data-alt="mdr's Blog" class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地1</span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> Posts</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> Categories</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=/fixit.min.svg srcset="/fixit.min.svg, /fixit.min.svg 1.5x, /fixit.min.svg 2x" sizes=auto data-title=/fixit.min.svg data-alt=/fixit.min.svg class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地1</span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> Posts</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> Categories</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> Tags</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><main class=container><aside class=toc id=toc-auto></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span></span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/mdr668 title=作者 target=_blank rel="external nofollow noopener noreferrer author" class=author><i class="fa-solid fa-user-circle" aria-hidden=true></i>
+mdr</a></span></div><div class=post-meta-line><span title="发布于 0001-01-01 00:00:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=0001-01-01>0001-01-01</time></span>&nbsp;<span title="更新于 0001-01-01 00:00:00"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=0001-01-01>0001-01-01</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden=true></i>约 1876 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden=true></i>预计阅读 4 分钟</span>&nbsp;</div></div><div class=content id=content><h1 id=zingfront-逆向笔记>zingfront 逆向笔记</h1><p>确定参数来源</p><p>拼接组装待加密的参数:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>2825b4500  0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61  ..iPhone 13.7..a
+</span></span><span class=line><span class=cl>2825b4510  66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e  fma-sdk-i-v7.69.
+</span></span><span class=line><span class=cl>2825b4520  30 c8 01 a4 c5 cd 98 06 18 1e 28 03 30 64 20 00  0.........(.0d .
+</span></span><span class=line><span class=cl>2825b4530  88 01 00 b8 01 a4 c5 cd 98 06 58 01 60 01 b0 01  ..........X.`...
+</span></span><span class=line><span class=cl>2825b4540  01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80 0f  ................
+</span></span><span class=line><span class=cl>2825b4550  92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72 2e  ...1.0......mdr.
+</span></span><span class=line><span class=cl>2825b4560  7a 69 6e 67 66 72 6f 6e 74 c8 04 01 00 00 00 00  zingfront.......
+</span></span></code></pre></td></tr></table></div></div><p>数据格式为protobuf</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;0&#34;: [
+</span></span><span class=line><span class=cl>        0,
+</span></span><span class=line><span class=cl>        0
+</span></span><span class=line><span class=cl>    ],
+</span></span><span class=line><span class=cl>    &#34;1&#34;: &#34;iPhone 13.7&#34;,
+</span></span><span class=line><span class=cl>    &#34;2&#34;: {
+</span></span><span class=line><span class=cl>        &#34;12&#34;: 7380662212167495000,
+</span></span><span class=line><span class=cl>        &#34;13&#34;: 3275866450576355000 ///解析错误 应该为:afma-sdk-i-v7.69.0
+</span></span><span class=line><span class=cl>    },
+</span></span><span class=line><span class=cl>    &#34;3&#34;: 55,
+</span></span><span class=line><span class=cl>    &#34;4&#34;: 1,
+</span></span><span class=line><span class=cl>    &#34;5&#34;: 3,
+</span></span><span class=line><span class=cl>    &#34;6&#34;: 100,
+</span></span><span class=line><span class=cl>    &#34;11&#34;: 1,
+</span></span><span class=line><span class=cl>    &#34;12&#34;: 1,
+</span></span><span class=line><span class=cl>    &#34;17&#34;: 1,
+</span></span><span class=line><span class=cl>    &#34;19&#34;: 0,
+</span></span><span class=line><span class=cl>    &#34;22&#34;: 1,
+</span></span><span class=line><span class=cl>    &#34;23&#34;: 1662274211,
+</span></span><span class=line><span class=cl>    &#34;25&#34;: 1662274211,
+</span></span><span class=line><span class=cl>    &#34;31&#34;: 1242,
+</span></span><span class=line><span class=cl>    &#34;32&#34;: 2208,
+</span></span><span class=line><span class=cl>    &#34;33&#34;: 1920,
+</span></span><span class=line><span class=cl>    &#34;34&#34;: &#34;1.0&#34;,
+</span></span><span class=line><span class=cl>    &#34;46&#34;: &#34;mdr.zingfront&#34;,
+</span></span><span class=line><span class=cl>    &#34;68&#34;: 2,
+</span></span><span class=line><span class=cl>    &#34;73&#34;: 1
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>ggi_ged 0x9C724 加密入口
+入参:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>call:,RewardedVideoExample,0x9c724==========================
+</span></span><span class=line><span class=cl>,arg0:            0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+</span></span><span class=line><span class=cl>2825b4500  0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12 61  ..iPhone 13.7..a
+</span></span><span class=line><span class=cl>2825b4510  66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39 2e  fma-sdk-i-v7.69.
+</span></span><span class=line><span class=cl>2825b4520  30 c8 01 a4 c5 cd 98 06 18 1e 28 03 30 64 20 00  0.........(.0d .
+</span></span><span class=line><span class=cl>2825b4530  88 01 00 b8 01 a4 c5 cd 98 06 58 01 60 01 b0 01  ..........X.`...
+</span></span><span class=line><span class=cl>2825b4540  01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80 0f  ................
+</span></span><span class=line><span class=cl>2825b4550  92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72 2e  ...1.0......mdr.
+</span></span><span class=line><span class=cl>2825b4560  7a 69 6e 67 66 72 6f 6e 74 c8 04 01 00 00 00 00  zingfront.......
+</span></span><span class=line><span class=cl>,arg1:0x6c
+</span></span><span class=line><span class=cl>,arg2:0x0
+</span></span></code></pre></td></tr></table></div></div><p>出参:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>retval:fBiZAnYYId0YBTGaOa9sY4-Zqb-YQz-icux8Ra6G_b8aNrUnRDEMgJq5OXqDShD5QibOsQp-c345cXRoG9XhhpQoU8FDfMFU71lpYMyeWSHwBTHA_JMpAn7eJfy90A1RG7LFgTQSE_Iqxnm2f-cUS2IRFZC-D7ipMe-MFJR-69UA4pAKAdp_eSDGXM_VJeJ8_TkocFTwWzpeIHPvMRPv9S8opMBouDlBxLmQXszBX25Ci9k5LrJMvqUb3k_Satc-qv2itlVvyHgfD52MSNii0aTNQSb57Wt_x_KToBXPX84CBUxmJPigxe5BUVUNd6SKtZjZ6sUHKkkrgS7ViZQK5g
+</span></span></code></pre></td></tr></table></div></div><p>加密流程</p><ol><li>开头插入字节码长度 0x6C ,字节码结束的位置补齐随机数到0xF0</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>283b554a0  6c 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12  l..iPhone 13.7..
+</span></span><span class=line><span class=cl>283b554b0  61 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39  afma-sdk-i-v7.69
+</span></span><span class=line><span class=cl>283b554c0  2e 30 c8 01 f9 c9 d0 98 06 18 11 28 03 30 64 20  .0.........(.0d 
+</span></span><span class=line><span class=cl>283b554d0  00 88 01 00 b8 01 f9 c9 d0 98 06 58 01 60 01 b0  ...........X.`..
+</span></span><span class=line><span class=cl>283b554e0  01 01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80  ................
+</span></span><span class=line><span class=cl>283b554f0  0f 92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72  ....1.0......mdr
+</span></span><span class=line><span class=cl>283b55500  2e 7a 69 6e 67 66 72 6f 6e 74 c8 04 01 55 64 81  .zingfront...Ud.
+</span></span><span class=line><span class=cl>283b55510  d8 e9 2e ab d6 68 93 f4 c8 2c 50 76 a0 8f 63 1f  .....h...,Pv..c.
+</span></span><span class=line><span class=cl>283b55520  66 83 42 9f 31 4a 6e 78 07 48 1f 4d 50 2e a6 95  f.B.1Jnx.H.MP...
+</span></span><span class=line><span class=cl>283b55530  5f 13 c7 75 79 d0 f4 70 97 d8 78 d4 05 3e 68 63  _..uy..p..x..&gt;hc
+</span></span><span class=line><span class=cl>283b55540  54 d4 59 9d 9b b4 a7 be 48 1e 8b 6a e2 62 81 ec  T.Y.....H..j.b..
+</span></span><span class=line><span class=cl>283b55550  58 77 09 97 1e 79 54 a5 04 07 f9 2d e2 24 02 e3  Xw...yT....-.$..
+</span></span><span class=line><span class=cl>283b55560  a9 e1 85 2a 5f e5 ec 01 5a 63 3c 73 2c 61 65 df  ...*_...Zc&lt;s,ae.
+</span></span><span class=line><span class=cl>283b55570  76 37 6b c3 60 2f 02 69 70 60 26 87 f2 62 30 af  v7k.`/.ip`&amp;..b0.
+</span></span><span class=line><span class=cl>283b55580  02 30 80 d4 80 32 bc 3c 04 47 eb 00 09 82 a4 2f  .0...2.&lt;.G...../
+</span></span></code></pre></td></tr></table></div></div><ol><li>整体做 MD5 结果16个字节插入字节码起始位置</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>283883000  1c cd 55 06 5d 1a 23 5b f2 f6 96 3c 2c fc 42 c6  ..U.].#[...&lt;,.B.
+</span></span><span class=line><span class=cl>283883010  6c 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12  l..iPhone 13.7..
+</span></span><span class=line><span class=cl>283883020  61 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39  afma-sdk-i-v7.69
+</span></span><span class=line><span class=cl>283883030  2e 30 c8 01 bd d3 cd 98 06 18 1d 28 03 30 64 20  .0.........(.0d 
+</span></span><span class=line><span class=cl>283883040  00 88 01 00 b8 01 bd d3 cd 98 06 58 01 60 01 b0  ...........X.`..
+</span></span><span class=line><span class=cl>283883050  01 01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80  ................
+</span></span><span class=line><span class=cl>283883060  0f 92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72  ....1.0......mdr
+</span></span><span class=line><span class=cl>283883070  2e 7a 69 6e 67 66 72 6f 6e 74 c8 04 01 38 0e c9  .zingfront...8..
+</span></span><span class=line><span class=cl>283883080  9f 0a bf 08 f2 5b 25 c8 63 bb 5a a4 93 22 f9 eb  .....[%.c.Z..&#34;..
+</span></span><span class=line><span class=cl>283883090  37 f1 6f 3e 23 35 22 e0 43 5a d2 60 4c 57 dc e4  7.o&gt;#5&#34;.CZ.`LW..
+</span></span><span class=line><span class=cl>2838830a0  f7 67 05 61 f4 98 aa 82 0f 80 64 9a 7d 1c 88 b4  .g.a......d.}...
+</span></span><span class=line><span class=cl>2838830b0  df 3b 65 78 f4 71 53 43 0e 4f 34 ce 8a b9 30 af  .;ex.qSC.O4...0.
+</span></span><span class=line><span class=cl>2838830c0  f4 bc f1 fe e9 54 c8 07 f1 46 a8 cc 6f 23 7e 50  .....T...F..o#~P
+</span></span><span class=line><span class=cl>2838830d0  2c 0d d1 e8 e9 ee f2 f2 a6 51 0f 45 34 16 90 78  ,........Q.E4..x
+</span></span><span class=line><span class=cl>2838830e0  50 df e1 30 dc 1f ea ed b7 4b aa 88 e0 17 7e 6e  P..0.....K....~n
+</span></span></code></pre></td></tr></table></div></div><ol><li>12轮异或加密</li><li>base64编码</li></ol><p>gdhf_ghf 0xEE0EC md5生成16字节插入第一行
+入参:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>call:,RewardedVideoExample,0xee0ec==========================
+</span></span><span class=line><span class=cl>,arg0:            0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+</span></span><span class=line><span class=cl>283b554a0  6c 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12  l..iPhone 13.7..
+</span></span><span class=line><span class=cl>283b554b0  61 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39  afma-sdk-i-v7.69
+</span></span><span class=line><span class=cl>283b554c0  2e 30 c8 01 f9 c9 d0 98 06 18 11 28 03 30 64 20  .0.........(.0d 
+</span></span><span class=line><span class=cl>283b554d0  00 88 01 00 b8 01 f9 c9 d0 98 06 58 01 60 01 b0  ...........X.`..
+</span></span><span class=line><span class=cl>283b554e0  01 01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80  ................
+</span></span><span class=line><span class=cl>283b554f0  0f 92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72  ....1.0......mdr
+</span></span><span class=line><span class=cl>283b55500  2e 7a 69 6e 67 66 72 6f 6e 74 c8 04 01 55 64 81  .zingfront...Ud.
+</span></span><span class=line><span class=cl>283b55510  d8 e9 2e ab d6 68 93 f4 c8 2c 50 76 a0 8f 63 1f  .....h...,Pv..c.
+</span></span><span class=line><span class=cl>283b55520  66 83 42 9f 31 4a 6e 78 07 48 1f 4d 50 2e a6 95  f.B.1Jnx.H.MP...
+</span></span><span class=line><span class=cl>283b55530  5f 13 c7 75 79 d0 f4 70 97 d8 78 d4 05 3e 68 63  _..uy..p..x..&gt;hc
+</span></span><span class=line><span class=cl>283b55540  54 d4 59 9d 9b b4 a7 be 48 1e 8b 6a e2 62 81 ec  T.Y.....H..j.b..
+</span></span><span class=line><span class=cl>283b55550  58 77 09 97 1e 79 54 a5 04 07 f9 2d e2 24 02 e3  Xw...yT....-.$..
+</span></span><span class=line><span class=cl>283b55560  a9 e1 85 2a 5f e5 ec 01 5a 63 3c 73 2c 61 65 df  ...*_...Zc&lt;s,ae.
+</span></span><span class=line><span class=cl>283b55570  76 37 6b c3 60 2f 02 69 70 60 26 87 f2 62 30 af  v7k.`/.ip`&amp;..b0.
+</span></span><span class=line><span class=cl>283b55580  02 30 80 d4 80 32 bc 3c 04 47 eb 00 09 82 a4 2f  .0...2.&lt;.G...../
+</span></span><span class=line><span class=cl>,arg1:0xf0
+</span></span></code></pre></td></tr></table></div></div><p>出参:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>,retval retval:            0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+</span></span><span class=line><span class=cl>16f9c27e8  e2 8e c4 c8 c9 dc 4a 3e 70 4f 67 50 3a 8f 19 89  ......J&gt;pOgP:...
+</span></span></code></pre></td></tr></table></div></div><p>第二行起始写入长度 0x6C 后拼接入参
+0x6d之后使用rand生成随机数填充到0xf0长度</p><p>0x9CBE8 调用 gad_bs 0x9E44C 12轮异或加密</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[iPhone::mdr.zingfront]-&gt; call:,RewardedVideoExample,0x9e44c==========================
+</span></span><span class=line><span class=cl>,arg0:            0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+</span></span><span class=line><span class=cl>283883000  1c cd 55 06 5d 1a 23 5b f2 f6 96 3c 2c fc 42 c6  ..U.].#[...&lt;,.B.
+</span></span><span class=line><span class=cl>283883010  6c 0a 0b 69 50 68 6f 6e 65 20 31 33 2e 37 12 12  l..iPhone 13.7..
+</span></span><span class=line><span class=cl>283883020  61 66 6d 61 2d 73 64 6b 2d 69 2d 76 37 2e 36 39  afma-sdk-i-v7.69
+</span></span><span class=line><span class=cl>283883030  2e 30 c8 01 bd d3 cd 98 06 18 1d 28 03 30 64 20  .0.........(.0d 
+</span></span><span class=line><span class=cl>283883040  00 88 01 00 b8 01 bd d3 cd 98 06 58 01 60 01 b0  ...........X.`..
+</span></span><span class=line><span class=cl>283883050  01 01 98 01 00 f8 01 da 09 80 02 a0 11 88 02 80  ................
+</span></span><span class=line><span class=cl>283883060  0f 92 02 03 31 2e 30 a0 04 02 f2 02 0d 6d 64 72  ....1.0......mdr
+</span></span><span class=line><span class=cl>283883070  2e 7a 69 6e 67 66 72 6f 6e 74 c8 04 01 38 0e c9  .zingfront...8..
+</span></span><span class=line><span class=cl>283883080  9f 0a bf 08 f2 5b 25 c8 63 bb 5a a4 93 22 f9 eb  .....[%.c.Z..&#34;..
+</span></span><span class=line><span class=cl>283883090  37 f1 6f 3e 23 35 22 e0 43 5a d2 60 4c 57 dc e4  7.o&gt;#5&#34;.CZ.`LW..
+</span></span><span class=line><span class=cl>2838830a0  f7 67 05 61 f4 98 aa 82 0f 80 64 9a 7d 1c 88 b4  .g.a......d.}...
+</span></span><span class=line><span class=cl>2838830b0  df 3b 65 78 f4 71 53 43 0e 4f 34 ce 8a b9 30 af  .;ex.qSC.O4...0.
+</span></span><span class=line><span class=cl>2838830c0  f4 bc f1 fe e9 54 c8 07 f1 46 a8 cc 6f 23 7e 50  .....T...F..o#~P
+</span></span><span class=line><span class=cl>2838830d0  2c 0d d1 e8 e9 ee f2 f2 a6 51 0f 45 34 16 90 78  ,........Q.E4..x
+</span></span><span class=line><span class=cl>2838830e0  50 df e1 30 dc 1f ea ed b7 4b aa 88 e0 17 7e 6e  P..0.....K....~n
+</span></span><span class=line><span class=cl>2838830f0  10 d6 ae 18 87 dc 94 ca e8 a0 33 5d 23 56 e9 ad  ..........3]#V..
+</span></span></code></pre></td></tr></table></div></div><p>返回的结果结果为 _ggu_gad_gwse 0x00EDD1C base64生成 A-Za-z0-9-_格式</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 0001-01-01 00:00:00">更新于 0001-01-01&nbsp;</span></div><div class=post-info-license><span><a rel="license external nofollow noopener noreferrer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=/zingfront-%E9%80%86%E5%90%91/ data-title><i class="fa-brands fa-twitter fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=/zingfront-%E9%80%86%E5%90%91/><i class="fa-brands fa-facebook-square fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=/zingfront-%E9%80%86%E5%90%91/ data-title><i class="fa-brands fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/ class=post-nav-item rel=next title="使用 LLDBTrace 还原算法">使用 LLDBTrace 还原算法<i class="fa-solid fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></main><footer class=footer><div class=footer-container><div class="footer-line statistics"><span class=site-time title=网站运行中……><i class="fa-solid fa-heartbeat fa-fw animate-icon" aria-hidden=true></i><span class="ms-1 d-none">已经持续输出</span><span class="run-times ms-1">网站运行中……</span></span></div></div></footer></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class="variant-numeric d-none">0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/lib/katex/katex.min.css><script src=/lib/sharer/sharer.min.js async defer></script><script src=/lib/katex/katex.min.js defer></script><script src=/lib/katex/auto-render.min.js defer></script><script src=/lib/katex/copy-tex.min.js defer></script><script src=/lib/katex/mhchem.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",editLockTitle:"锁定可编辑代码块",editUnLockTitle:"解锁可编辑代码块",editable:!0,maxShownLines:10},comment:{enable:!1},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},siteTime:"2022-12-18T16:15:22+08:00"}</script><script src=/js/theme.min.js defer></script></body></html>
