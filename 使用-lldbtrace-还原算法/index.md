@@ -29,10 +29,9 @@ void byteTurn(uint8_t *lpBuf,int lpLen,int seed){
 ```
 
 
-在 `byteTurn` 函数前后分别打印
+在 `byteTurn` 函数前后分别打印1
 
-进入前: `06 9c e7 0e 9c a6 d1 6d bd c8 77 a5 d1 68 bd cf`
-
+进入前: `06 9c e7 0e 9c a6 d1 6d bd c8 77 a5 d1 68 bd cf`  
 WASM值:    `65 fe 03 e5 fe ff 02 db 00 01 7c ff 02 8b 00 01`
 
 正&ensp;常&ensp;值:   `65 ce 83 e5 ce 6f 22 db e0 91 7c 5f 22 8b e0 01`
