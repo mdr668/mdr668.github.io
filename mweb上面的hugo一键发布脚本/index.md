@@ -1,4 +1,4 @@
-# 
+# MWeb上面的hugo一键发布脚本
 
 
 使用前需要先指定hugo sites的路径
@@ -61,6 +61,6 @@ git push
 
 ---
 
-> 作者: [mdr](https://github.com/mdr668)  
+> 作者: 猫大人  
 > URL: /mweb%E4%B8%8A%E9%9D%A2%E7%9A%84hugo%E4%B8%80%E9%94%AE%E5%8F%91%E5%B8%83%E8%84%9A%E6%9C%AC/  
 
