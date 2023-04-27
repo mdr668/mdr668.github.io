@@ -5,8 +5,9 @@
 ```
 #!/bin/sh
 
-cdate=$(date +%Y-%m-%d)
-hugo_path="{HOME}/Documents/MWebLibrary/hugo_blogs"
+fileDir={{fileDir}}
+cdate=$(date +%Y-%m-%dT%H:%M:%S+08:00)
+hugo_path="${fileDir%????}/hugo_blogs"
 pagesname="{{title}}"
 filename={{fileName}}
 mweb_mediapath={{fileDir}}/media/${filename%???}
@@ -32,16 +33,17 @@ author:\
 #拷贝资源目录
 if [ -d "$mweb_mediapath" ]; then
     mediapath=$hugo_path/content/posts/"$pagesname"/media/
-	if [ ! -d "$mediapath" ]; then
-	    mkdir "$mediapath"
-	fi
-	cp -rf "$mweb_mediapath" "$mediapath"
+if [ ! -d "$mediapath" ]; then
+   mkdir "$mediapath"
+fi
+cp -rf "$mweb_mediapath" "$mediapath"
 fi
 
 cd $hugo_path
 git add .
 git commit -m "pages: $pagesname"
 git push
+
 ```
 
 ---
