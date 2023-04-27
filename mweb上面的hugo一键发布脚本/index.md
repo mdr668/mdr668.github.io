@@ -30,7 +30,7 @@ author:\
 description: \
 keywords:\
 tags:\
-  - 随笔
+  - 随笔\
 categories:\
   - 随笔\
 hiddenFromHomePage: false\
