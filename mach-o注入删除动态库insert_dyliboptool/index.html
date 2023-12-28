@@ -1,0 +1,206 @@
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>Mach-O注入删除动态库insert_dyliboptool - mdr's Blog</title><meta name=author content="mdr">
+<meta name=author-link content="https://github.com/mdr668"><meta name=description content="如果要让现成的App，执行自己的代码可以通过注入动态库， 静态的注入可以使用optool工具修改MachO的Load Commands然后重签，"><meta name=keywords content="Hugo,FixIt"><meta itemprop=name content="Mach-O注入删除动态库insert_dyliboptool"><meta itemprop=description content="如果要让现成的App，执行自己的代码可以通过注入动态库， 静态的注入可以使用optool工具修改MachO的Load Commands然后重签，"><meta itemprop=datePublished content="2023-12-28T15:23:13+08:00"><meta itemprop=dateModified content="2023-12-28T15:23:13+08:00"><meta itemprop=wordCount content="1391"><meta itemprop=keywords content><meta property="og:title" content="Mach-O注入删除动态库insert_dyliboptool"><meta property="og:description" content="如果要让现成的App，执行自己的代码可以通过注入动态库， 静态的注入可以使用optool工具修改MachO的Load Commands然后重签，"><meta property="og:type" content="article"><meta property="og:url" content="/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-12-28T15:23:13+08:00"><meta property="article:modified_time" content="2023-12-28T15:23:13+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Mach-O注入删除动态库insert_dyliboptool"><meta name=twitter:description content="如果要让现成的App，执行自己的代码可以通过注入动态库， 静态的注入可以使用optool工具修改MachO的Load Commands然后重签，"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool/><link rel=prev href=/%E6%B2%B9%E7%8C%B4%E8%84%9A%E6%9C%AC%E5%A6%82%E4%BD%95%E7%82%B9%E5%87%BBalert%E6%8F%90%E7%A4%BA%E6%A1%86/><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Mach-O注入删除动态库insert_dyliboptool","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool\/"},"genre":"posts","wordcount":1391,"url":"\/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool\/","datePublished":"2023-12-28T15:23:13+08:00","dateModified":"2023-12-28T15:23:13+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"猫大人"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=NFT-013063-a2fc488f-00054799.webp srcset="/NFT-013063-a2fc488f-00054799.webp, NFT-013063-a2fc488f-00054799.webp 1.5x, /NFT-013063-a2fc488f-00054799.webp 2x" sizes=auto data-title="mdr's Blog" data-alt="mdr's Blog" width=240 height=240 class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地</span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 文章</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="mdr's Blog"><img loading=lazy src=NFT-013063-a2fc488f-00054799.webp srcset="/NFT-013063-a2fc488f-00054799.webp, NFT-013063-a2fc488f-00054799.webp 1.5x, /NFT-013063-a2fc488f-00054799.webp 2x" sizes=auto data-title=/NFT-013063-a2fc488f-00054799.webp data-alt=/NFT-013063-a2fc488f-00054799.webp width=240 height=240 class=logo style="background:url(/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text>猫大人的自留地</span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=menu-item><a class=menu-link href=/posts/><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 文章</a></li><li class=menu-item><a class=menu-link href=/categories/><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><main class=container><aside class=toc id=toc-auto></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>Mach-O注入删除动态库insert_dyliboptool</span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author></span></div><div class=post-meta-line><span title="更新于 2023-12-28 15:23:13"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2023-12-28>2023-12-28</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden=true></i>约 1391 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden=true></i>预计阅读 3 分钟</span>&nbsp;</div></div><div class=content id=content><p>如果要让现成的App，执行自己的代码可以通过注入动态库，</p><p>静态的注入可以使用optool工具修改MachO的Load Commands然后重签，</p><p>动态运行时可以使用dlopen 或 Bundle(path: &ldquo;**.bundle&rdquo;).load()加载</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=err>通过</span> <span class=n>otool</span> <span class=o>-</span><span class=n>L命令查看你生成的</span><span class=o>.</span><span class=n>dylib文件</span>
+</span></span><span class=line><span class=cl><span class=n>otool</span> <span class=o>-</span><span class=n>L</span> <span class=n>ioswechatselectall</span><span class=o>.</span><span class=n>dylib</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>查看</span><span class=n>CPU框架</span>
+</span></span><span class=line><span class=cl><span class=n>lipo</span> <span class=o>-</span><span class=n>archs</span> <span class=n>ioswechatselectall</span><span class=o>.</span><span class=n>dylib</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>首先要找到</span><span class=n>libsubstrate</span><span class=o>.</span><span class=n>dylib文件</span><span class=p>,</span><span class=err>该文件应该在</span><span class=o>/</span><span class=n>opt</span><span class=o>/</span><span class=n>thoes</span><span class=o>/</span><span class=n>lib</span><span class=o>/</span><span class=err>目录下</span><span class=p>,</span><span class=err>然后将其拷贝到与你生成的的</span><span class=o>.</span><span class=n>dylib一个目录下</span><span class=p>,</span><span class=err>通过下面的指令修改依赖</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=n>install_name_tool</span> <span class=o>-</span><span class=n>change</span> <span class=o>/</span><span class=n>Library</span><span class=o>/</span><span class=n>Frameworks</span><span class=o>/</span><span class=n>CydiaSubstrate</span><span class=o>.</span><span class=n>framework</span><span class=o>/</span><span class=n>CydiaSubstrate</span> <span class=err>@</span><span class=n>loader_path</span><span class=o>/</span><span class=n>libsubstrate</span><span class=o>.</span><span class=n>dylib</span> <span class=n>wx</span><span class=o>.</span><span class=n>dylib</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>添加可执行文件的依赖</span>
+</span></span><span class=line><span class=cl><span class=err>此处用的是</span><span class=n>insert_dylib</span> <span class=err>下载地址在</span><span class=n>https</span><span class=p>:</span><span class=o>//</span><span class=n>github</span><span class=o>.</span><span class=n>com</span><span class=o>/</span><span class=n>Tyilo</span><span class=o>/</span><span class=n>insert_dylib</span>
+</span></span><span class=line><span class=cl><span class=err>编译后</span><span class=p>,</span><span class=err>将其与其他两个文件拷贝到同一目录下</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>然后将其插入到执行文件中</span>
+</span></span><span class=line><span class=cl><span class=mf>1.</span><span class=err>将</span><span class=n>wx</span><span class=o>.</span><span class=n>dylib</span> <span class=err>和</span><span class=n>libsubstrate</span><span class=o>.</span><span class=n>dylib拷贝进你的WeChat</span><span class=o>.</span><span class=n>app</span> 
+</span></span><span class=line><span class=cl><span class=mf>2.</span><span class=err>记住要把</span><span class=n>WeChat_patched的名字改回来WeChat</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>@</span><span class=n>executable_path是一个环境变量</span><span class=err>，指的是二进制文件所在的路径</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>insert_dylib命令格式</span><span class=err>：</span> <span class=o>./</span><span class=n>insert_dylib</span> <span class=err>动态库路径</span> <span class=err>目标二进制文件</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>//</span><span class=err>注入动态库</span>
+</span></span><span class=line><span class=cl><span class=o>./</span><span class=n>insert_dylib</span> <span class=err>@</span><span class=n>executable_path</span><span class=o>/</span><span class=n>ioswechatselectall</span><span class=o>.</span><span class=n>dylib</span> <span class=n>WeChat</span> 
+</span></span><span class=line><span class=cl><span class=o>./</span><span class=n>yololib</span>  <span class=n>Wechat</span> <span class=n>wxhbts</span><span class=o>.</span><span class=n>dylib</span>
+</span></span><span class=line><span class=cl><span class=o>//</span><span class=err>打包成</span><span class=n>ipa</span> 
+</span></span><span class=line><span class=cl><span class=n>xcrun</span> <span class=o>-</span><span class=n>sdk</span> <span class=n>iphoneos</span> <span class=n>PackageApplication</span> <span class=o>-</span><span class=n>v</span> <span class=n>WeChat</span><span class=o>.</span><span class=n>app</span> <span class=o>-</span><span class=n>o</span> <span class=err>`</span><span class=n>pwd</span><span class=err>`</span><span class=o>/</span><span class=n>WeChat</span><span class=o>.</span><span class=n>ipa</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>注入神器</span><span class=n>optool</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>编译获取</span>
+</span></span><span class=line><span class=cl><span class=err>因为</span> <span class=n>optool</span> <span class=err>添加了</span> <span class=n>submodule</span><span class=err>，因为需要使用</span> <span class=o>--</span><span class=n>recuresive</span> <span class=err>选项，将子模块全部</span> <span class=n>clone</span> <span class=err>下来</span>
+</span></span><span class=line><span class=cl><span class=n>git</span> <span class=n>clone</span> <span class=o>--</span><span class=n>recursive</span> <span class=n>https</span><span class=p>:</span><span class=o>//</span><span class=n>github</span><span class=o>.</span><span class=n>com</span><span class=o>/</span><span class=n>alexzielenski</span><span class=o>/</span><span class=n>optool</span><span class=o>.</span><span class=n>git</span>
+</span></span><span class=line><span class=cl><span class=n>cd</span> <span class=n>optool</span>
+</span></span><span class=line><span class=cl><span class=n>xcodebuild</span> <span class=o>-</span><span class=n>project</span> <span class=n>optool</span><span class=o>.</span><span class=n>xcodeproj</span> <span class=o>-</span><span class=n>configuration</span> <span class=n>Release</span> <span class=n>ARCHS</span><span class=o>=</span><span class=s2>&#34;i386 x86_64&#34;</span> <span class=n>build</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>使用</span> <span class=n>optool</span> <span class=err>把</span> <span class=n>wx</span><span class=o>.</span><span class=n>dylib</span> <span class=err>注入到二进制文件中</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>./</span><span class=n>optool</span> <span class=n>install</span> <span class=o>-</span><span class=n>c</span> <span class=nb>load</span> <span class=o>-</span><span class=n>p</span> <span class=s2>&#34;@executable_path/wx.dylib&#34;</span> <span class=o>-</span><span class=n>t</span> <span class=n>WeChat</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>codesign签名dylib</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>errSecInternalComponent</span> <span class=err>错误</span>
+</span></span><span class=line><span class=cl><span class=err>在</span><span class=n>Mac终端上运行codesign命令</span><span class=err>，并“始终允许”</span> <span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>codesign访问密钥</span>
+</span></span><span class=line><span class=cl><span class=n>security</span> <span class=n>unlock</span><span class=o>-</span><span class=n>keychain</span> <span class=n>login</span><span class=o>.</span><span class=n>keychain</span>
+</span></span><span class=line><span class=cl><span class=err>解锁命令移至，</span><span class=o>~/.</span><span class=n>bash_profile以便在SSH客户端启动时对钥匙串进行解锁</span>
+</span></span><span class=line><span class=cl><span class=n>AppleWWDRCAG3</span> <span class=err>不收信任证书</span>
+</span></span><span class=line><span class=cl><span class=err>获取证书</span>
+</span></span><span class=line><span class=cl><span class=n>security</span> <span class=n>find</span><span class=o>-</span><span class=n>identity</span> <span class=o>-</span><span class=n>v</span> <span class=o>-</span><span class=n>p</span> <span class=n>codesigning</span> 
+</span></span><span class=line><span class=cl><span class=err>签名</span><span class=n>Dylib</span> 
+</span></span><span class=line><span class=cl><span class=n>codesign</span> <span class=o>-</span><span class=n>f</span> <span class=o>-</span><span class=n>s</span> <span class=n>B3C14FC452E835C09B70D5C24961EBAFC0A2C4B9</span> <span class=n>hook</span><span class=o>.</span><span class=n>dylib</span> 
+</span></span><span class=line><span class=cl><span class=n>ldid</span> <span class=o>-</span><span class=n>S</span> <span class=n>dumpdecrypted</span><span class=o>.</span><span class=n>dylib</span>
+</span></span><span class=line><span class=cl><span class=mf>1.</span><span class=err>安装</span> <span class=n>Xcode</span> 
+</span></span><span class=line><span class=cl><span class=mf>2.</span><span class=err>安装</span> <span class=n>Command</span> <span class=n>Line</span> <span class=n>Tools</span> 
+</span></span><span class=line><span class=cl><span class=n>xcode</span><span class=o>-</span><span class=n>select</span> <span class=o>--</span><span class=n>install</span> 
+</span></span><span class=line><span class=cl><span class=n>codesign</span> <span class=o>--</span><span class=n>force</span> <span class=o>--</span><span class=n>deep</span> <span class=o>--</span><span class=nb>sign</span> <span class=o>-</span> <span class=o>/</span><span class=n>xxx</span><span class=o>/</span><span class=n>xxx</span><span class=o>.</span><span class=n>app</span> 
+</span></span><span class=line><span class=cl><span class=err>签名错误</span> <span class=n>resource</span> <span class=n>fork</span><span class=p>,</span> <span class=n>Finder</span> <span class=n>information</span><span class=p>,</span> <span class=ow>or</span> <span class=n>similar</span> <span class=n>detritus</span> <span class=ow>not</span> <span class=n>allowed</span> 
+</span></span><span class=line><span class=cl><span class=err>解决方法</span> <span class=n>xattr</span> <span class=o>-</span><span class=n>lr</span> <span class=o>&lt;</span><span class=n>path_to_app_bundle</span><span class=o>&gt;</span> 
+</span></span><span class=line><span class=cl><span class=err>查看</span> <span class=n>xattr</span> <span class=o>-</span><span class=n>cr</span> <span class=o>&lt;</span><span class=n>path_to_app_bundle</span><span class=o>&gt;</span> <span class=err>删除</span> 
+</span></span><span class=line><span class=cl><span class=err>或者</span> <span class=n>find</span> <span class=o>.</span> <span class=o>-</span><span class=n>type</span> <span class=n>f</span> <span class=o>-</span><span class=n>name</span> <span class=s1>&#39;*.jpeg&#39;</span> <span class=o>-</span><span class=n>exec</span> <span class=n>xattr</span> <span class=o>-</span><span class=n>c</span> <span class=p>{}</span> \<span class=p>;</span> <span class=n>find</span> <span class=o>.</span> <span class=o>-</span><span class=n>type</span> <span class=n>f</span> <span class=o>-</span><span class=n>name</span> <span class=s1>&#39;*.png&#39;</span> <span class=o>-</span><span class=n>exec</span> <span class=n>xattr</span> <span class=o>-</span><span class=n>c</span> <span class=p>{}</span> \<span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=n>find</span> <span class=o>.</span> <span class=o>-</span><span class=n>type</span> <span class=n>f</span> <span class=o>-</span><span class=n>name</span> <span class=s1>&#39;*.tif&#39;</span> <span class=o>-</span><span class=n>exec</span> <span class=n>xattr</span> <span class=o>-</span><span class=n>c</span> <span class=p>{}</span> \<span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=err>整个</span><span class=n>App签名</span> <span class=n>codesign</span> <span class=o>-</span><span class=n>fs</span> <span class=s2>&#34;授权证书&#34;</span> <span class=o>--</span><span class=n>no</span><span class=o>-</span><span class=n>strict</span> <span class=o>--</span><span class=n>entitlements</span><span class=o>=</span><span class=err>生成的</span><span class=n>plist文件</span> <span class=n>WeChat</span><span class=o>.</span><span class=n>app</span> 
+</span></span><span class=line><span class=cl><span class=err>验证</span><span class=n>Dylib签名</span> <span class=n>codesign</span> <span class=err>–</span><span class=n>verify</span> <span class=n>hook</span><span class=o>.</span><span class=n>dylib</span> <span class=n>codesign</span> <span class=o>-</span><span class=n>vv</span> <span class=o>-</span><span class=n>d</span> <span class=n>WeChat</span><span class=o>.</span><span class=n>app</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Xcode升级到8</span><span class=o>.</span><span class=mi>3</span><span class=err>后</span> <span class=err>用命令进行打包</span> <span class=err>提示下面这个错误</span>
+</span></span><span class=line><span class=cl><span class=err>后面根据对比发现新版的</span><span class=n>Xcode少了这个PackageApplication</span>  <span class=p>(</span><span class=n>QQ群下载</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>先去找个旧版的</span><span class=n>Xcode里面copy一份过来</span>
+</span></span><span class=line><span class=cl><span class=err>放到下面这个目录：</span>
+</span></span><span class=line><span class=cl><span class=o>/</span><span class=n>Applications</span><span class=o>/</span><span class=n>Xcode</span><span class=o>.</span><span class=n>app</span><span class=o>/</span><span class=n>Contents</span><span class=o>/</span><span class=n>Developer</span><span class=o>/</span><span class=n>Platforms</span><span class=o>/</span><span class=n>iPhoneOS</span><span class=o>.</span><span class=n>platform</span><span class=o>/</span><span class=n>Developer</span><span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>然后执行命令</span>
+</span></span><span class=line><span class=cl><span class=n>sudo</span> <span class=n>xcode</span><span class=o>-</span><span class=n>select</span> <span class=o>-</span><span class=k>switch</span> <span class=o>/</span><span class=n>Applications</span><span class=o>/</span><span class=n>Xcode</span><span class=o>.</span><span class=n>app</span><span class=o>/</span><span class=n>Contents</span><span class=o>/</span><span class=n>Developer</span><span class=o>/</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>chmod</span> <span class=o>+</span><span class=n>x</span> <span class=o>/</span><span class=n>Applications</span><span class=o>/</span><span class=n>Xcode</span><span class=o>.</span><span class=n>app</span><span class=o>/</span><span class=n>Contents</span><span class=o>/</span><span class=n>Developer</span><span class=o>/</span><span class=n>Platforms</span><span class=o>/</span><span class=n>iPhoneOS</span><span class=o>.</span><span class=n>platform</span><span class=o>/</span><span class=n>Developer</span><span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>PackageApplication</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>theos</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>ARCHS</span> <span class=o>=</span> <span class=n>armv7</span> <span class=n>armv7s</span> <span class=n>arm64</span>
+</span></span><span class=line><span class=cl><span class=n>TARGET</span> <span class=o>=</span> <span class=n>iphone</span><span class=p>:</span><span class=mf>8.4</span><span class=p>:</span><span class=mf>7.0</span>
+</span></span><span class=line><span class=cl><span class=c1>#指定路径，否则默认在 /Library/MobileSubstrate/DynamicLibraries</span>
+</span></span><span class=line><span class=cl><span class=n>LOCAL_INSTALL_PATH</span> <span class=o>=</span> <span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=n>bin</span>
+</span></span><span class=line><span class=cl><span class=n>include</span> <span class=n>theos</span><span class=o>/</span><span class=n>makefiles</span><span class=o>/</span><span class=n>common</span><span class=o>.</span><span class=n>mk</span>
+</span></span><span class=line><span class=cl><span class=n>TWEAK_NAME</span> <span class=o>=</span> <span class=n>oooo</span>
+</span></span><span class=line><span class=cl><span class=n>oooo_FILES</span> <span class=o>=</span> <span class=n>oooo</span><span class=o>.</span><span class=n>xm</span>
+</span></span><span class=line><span class=cl><span class=c1>#指定版本</span>
+</span></span><span class=line><span class=cl><span class=n>_THEOS_TARGET_LDFLAGS</span> <span class=o>+=</span> <span class=o>-</span><span class=n>current_version</span> <span class=mf>1.0</span>
+</span></span><span class=line><span class=cl><span class=n>_THEOS_TARGET_LDFLAGS</span> <span class=o>+=</span> <span class=o>-</span><span class=n>compatibility_version</span> <span class=mf>1.0</span>
+</span></span><span class=line><span class=cl><span class=c1>#tweak2.mk是我修改过的，去掉了CydiaSubstrate链接，因为这个dylib用不到</span>
+</span></span><span class=line><span class=cl><span class=n>include</span> <span class=o>$</span><span class=p>(</span><span class=n>THEOS_MAKE_PATH</span><span class=p>)</span><span class=o>/</span><span class=n>tweak2</span><span class=o>.</span><span class=n>mk</span>
+</span></span><span class=line><span class=cl><span class=o>-</span><span class=n>current_version</span><span class=err>、</span><span class=o>-</span><span class=n>compatibility_version参数参考自苹果官方</span><span class=err>！！</span>
+</span></span><span class=line><span class=cl><span class=n>https</span><span class=p>:</span><span class=o>//</span><span class=n>developer</span><span class=o>.</span><span class=n>apple</span><span class=o>.</span><span class=n>com</span><span class=o>/</span><span class=n>library</span><span class=o>/</span><span class=n>mac</span><span class=o>/</span><span class=n>documentation</span><span class=o>/</span><span class=n>DeveloperTools</span><span class=o>/</span><span class=n>Conceptual</span><span class=o>/</span><span class=n>DynamicLibraries</span><span class=o>/</span><span class=mi>100</span><span class=o>-</span><span class=n>Articles</span><span class=o>/</span><span class=n>CreatingDynamicLibraries</span><span class=o>.</span><span class=n>html</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>theos编译不越狱可用的dylib</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>SUBSTRATE</span> <span class=err>?</span><span class=o>=</span> <span class=n>yes</span>
+</span></span><span class=line><span class=cl><span class=n>instance_USE_SUBSTRATE</span> <span class=o>=</span> <span class=o>$</span><span class=p>(</span><span class=n>SUBSTRATE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=err>把上面的</span><span class=n>instance替换成你的TweakName</span>
+</span></span><span class=line><span class=cl><span class=err>在上面的这个例子中就是</span><span class=n>XXXX</span> 
+</span></span><span class=line><span class=cl><span class=n>include</span> <span class=n>_USE_SUBSTRATE</span> <span class=o>=</span> <span class=n>no</span><span class=err>，请转换为使用</span><span class=n>include</span> <span class=n>_LOGOS_DEFAULT_GENERATOR</span> <span class=o>=</span> <span class=n>internal</span>
+</span></span><span class=line><span class=cl><span class=err>编译：</span><span class=n>make</span> <span class=n>SUBSTRATE</span><span class=o>=</span><span class=n>no</span>
+</span></span><span class=line><span class=cl><span class=err>编译</span><span class=n>DEB</span><span class=err>：</span><span class=n>make</span> <span class=n>SUBSTRATE</span><span class=o>=</span><span class=n>no</span> <span class=n>package</span>
+</span></span><span class=line><span class=cl><span class=err>编译</span><span class=n>DEB并安装</span><span class=err>：</span><span class=n>make</span> <span class=n>SUBSTRATE</span><span class=o>=</span><span class=n>no</span> <span class=n>package</span>  <span class=n>install</span>
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2023-12-28 15:23:13">更新于 2023-12-28&nbsp;</span></div><div class=post-info-license><span><a rel="license external nofollow noopener noreferrer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool/ data-title=Mach-O注入删除动态库insert_dyliboptool><i class="fa-brands fa-twitter fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool/><i class="fa-brands fa-facebook-square fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=/mach-o%E6%B3%A8%E5%85%A5%E5%88%A0%E9%99%A4%E5%8A%A8%E6%80%81%E5%BA%93insert_dyliboptool/ data-title=Mach-O注入删除动态库insert_dyliboptool><i class="fa-brands fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/%E6%B2%B9%E7%8C%B4%E8%84%9A%E6%9C%AC%E5%A6%82%E4%BD%95%E7%82%B9%E5%87%BBalert%E6%8F%90%E7%A4%BA%E6%A1%86/ class=post-nav-item rel=prev title=油猴脚本如何点击alert提示框><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>油猴脚本如何点击alert提示框</a></div></div><div id=comments><div id=gitalk class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://github.com/gitalk/gitalk rel="external nofollow noopener noreferrer">Gitalk</a>.</noscript></div></article></main><footer class=footer><div class=footer-container><div class="footer-line statistics"><span class=site-time title=网站运行中……><i class="fa-solid fa-heartbeat fa-fw animate-icon" aria-hidden=true></i><span class="ms-1 d-none">已经持续输出</span><span class="run-times ms-1">网站运行中……</span></span></div></div></footer></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class="variant-numeric d-none">0%</span></div><div class="fixed-button view-comments d-none" role=button aria-label=查看评论><i class="fa-solid fa-comment fa-fw" aria-hidden=true></i></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/lib/gitalk/gitalk.min.css><link rel=stylesheet href=/lib/katex/katex.min.css><script src=/lib/gitalk/gitalk.min.js></script><script src=/lib/sharer/sharer.min.js async defer></script><script src=/lib/katex/katex.min.js defer></script><script src=/lib/katex/auto-render.min.js defer></script><script src=/lib/katex/copy-tex.min.js defer></script><script src=/lib/katex/mhchem.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",editLockTitle:"锁定可编辑代码块",editUnLockTitle:"解锁可编辑代码块",editable:!0,maxShownLines:10},comment:{enable:!0,expired:!1,gitalk:{admin:["mdr668"],clientID:"04bf31663ad6d062490c",clientSecret:"bf91e6314f78b97dfbba4fac7572aa6229b4e817",id:"3b24d971",owner:"mdr668",repo:"mdr668.github.io",title:"Mach-O注入删除动态库insert_dyliboptool"}},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},siteTime:"2022-12-18T16:15:22+08:00"}</script><script src=/js/theme.min.js defer></script></body></html>
