@@ -1,4 +1,23 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>所有文章 - mdr's Blog</title><link>/posts/</link><description>所有文章 | mdr's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 13 Sep 2024 11:00:36 +0800</lastBuildDate><atom:link href="/posts/" rel="self" type="application/rss+xml"/><item><title>恢复macho被清空的Function Starts</title><link>/%E6%81%A2%E5%A4%8Dmacho%E8%A2%AB%E6%B8%85%E7%A9%BA%E7%9A%84function-starts/</link><pubDate>Fri, 13 Sep 2024 11:00:36 +0800</pubDate><author>mdr</author><guid>/%E6%81%A2%E5%A4%8Dmacho%E8%A2%AB%E6%B8%85%E7%A9%BA%E7%9A%84function-starts/</guid><description><![CDATA[<p>从ida提取</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>所有文章 - mdr's Blog</title><link>/posts/</link><description>所有文章 | mdr's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 20 Sep 2024 11:45:44 +0800</lastBuildDate><atom:link href="/posts/" rel="self" type="application/rss+xml"/><item><title>MAC 环境配置</title><link>/mac-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link><pubDate>Fri, 20 Sep 2024 11:45:44 +0800</pubDate><author>mdr</author><guid>/mac-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid><description><![CDATA[<ul>
+<li>安装端口转发工具 <code>brew install usbmuxd</code></li>
+<li>ssh 链接免验证</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sodu vim /etc/ssh/ssh_config
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">StrictHostKeyChecking no
+</span></span><span class="line"><span class="cl">UserKnownHostsFile /dev/null
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果提示 E45: &lsquo;readonly&rsquo; option isset (add ! to override)
+使用 :q! 强制关闭文件,用sudo打开</p>]]></description></item><item><title>恢复macho被清空的Function Starts</title><link>/%E6%81%A2%E5%A4%8Dmacho%E8%A2%AB%E6%B8%85%E7%A9%BA%E7%9A%84function-starts/</link><pubDate>Fri, 13 Sep 2024 11:00:36 +0800</pubDate><author>mdr</author><guid>/%E6%81%A2%E5%A4%8Dmacho%E8%A2%AB%E6%B8%85%E7%A9%BA%E7%9A%84function-starts/</guid><description><![CDATA[<p>从ida提取</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -307,31 +326,4 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>2.然后用ldid添加权限。
-由于ldid不支持fat二进制文件，所以要给debugserver瘦身，通过lipo指定要支持的指令类型，例如：</p>]]></description></item><item><title>使用 LLDBTrace 还原算法</title><link>/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/</link><pubDate>Thu, 27 Apr 2023 10:24:21 +0800</pubDate><author>mdr</author><guid>/%E4%BD%BF%E7%94%A8-lldbtrace-%E8%BF%98%E5%8E%9F%E7%AE%97%E6%B3%95/</guid><description><![CDATA[<p>lldbtrace链接 <a href="https://github.com/yangyss/lldb-trace"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/yangyss/lldb-trace</a></p>
-<h3 id="首先利用-lldbtrace-处理一个bug">首先利用 lldbtrace 处理一个BUG</h3>
-<p>有个经过 VMP 加固的结果一直不符合预期,大概定位一下位置</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    memset(dest,0,0x10000);
-</span></span><span class="line"><span class="cl">    ByteToHexStr(dvChr,dest,dvChrLen);
-</span></span><span class="line"><span class="cl">    printf(&#34;进入前:%s\n&#34;,dest);
-</span></span><span class="line"><span class="cl">               
-</span></span><span class="line"><span class="cl">    byteTurn(dvChr, dvChrLen, 0x5);//字节翻转加密
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    memset(dest2,0,0x10000);
-</span></span><span class="line"><span class="cl">    ByteToHexStr(dvChr,dest,dvChrLen);
-</span></span><span class="line"><span class="cl">    printf(&#34;进入后:%s\n&#34;,dest);
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>byteTurn函数的功能是对字节分别进行翻转,并加上一个值</p>]]></description></item></channel></rss>
+由于ldid不支持fat二进制文件，所以要给debugserver瘦身，通过lipo指定要支持的指令类型，例如：</p>]]></description></item></channel></rss>
